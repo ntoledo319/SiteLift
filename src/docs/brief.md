@@ -13,7 +13,7 @@ SiteLift is the productized WordPress-exit microsite for Toledo Technologies LLC
 
 - Discovery front door: **Delphi Fit Check** at `$750`
 - Package bands: **Arcadia**, **Aegis**, **Odyssey**, **Elysian`
-- Default quote for a typical small-business migration: **Aegis at $9,500**
+- Default quote for a typical small-business migration: **Aegis at $7,500 – $12,500**
 - Default stack: **Vercel Pro + Cloudflare Pages CMS** at about `$20/mo`
 - Platform choice is part of discovery; SiteLift is platform-agnostic
 

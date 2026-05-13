@@ -31,7 +31,7 @@ npm run build
 ## Canonical commercial rules
 
 - Published package bands: Arcadia, Aegis, Odyssey, Elysian
-- Default quote for a typical small-business migration: Aegis at `$9,500`
+- Default quote for a typical small-business migration: Aegis at `$7,500 – $12,500`
 - Discovery front door: Delphi Fit Check at `$750`
 - Platform choice happens during discovery; default stack is not mandatory
 
