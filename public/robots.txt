@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sitelift.toledotechnologies.com/sitemap.xml
