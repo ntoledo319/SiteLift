@@ -139,12 +139,252 @@
         border-top: 1px solid rgb(255 255 255 / 0.1);
       }
 
+      /* Form */
+      .fit-form {
+        display: grid;
+        gap: 1.1rem;
+      }
+
+      .fit-field {
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .fit-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .fit-label {
+        font-family: var(--font-body);
+        font-size: 0.7rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--smoke-white);
+        opacity: 0.72;
+      }
+
+      .fit-label .req {
+        color: var(--electric-violet);
+        margin-left: 0.2em;
+      }
+
+      .fit-input,
+      .fit-select,
+      .fit-textarea {
+        width: 100%;
+        background: rgb(3 3 3 / 0.6);
+        border: 1px solid rgb(255 255 255 / 0.12);
+        border-radius: 0.75rem;
+        padding: 0.9rem 1rem;
+        font-family: var(--font-body);
+        font-size: 0.98rem;
+        color: var(--pure-white);
+        transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .fit-input::placeholder,
+      .fit-textarea::placeholder {
+        color: var(--slate-text);
+        opacity: 0.55;
+      }
+
+      .fit-input:hover,
+      .fit-select:hover,
+      .fit-textarea:hover {
+        border-color: rgb(255 255 255 / 0.22);
+      }
+
+      .fit-input:focus,
+      .fit-select:focus,
+      .fit-textarea:focus {
+        outline: none;
+        border-color: var(--electric-violet);
+        background: rgb(3 3 3 / 0.8);
+        box-shadow: 0 0 0 3px rgb(139 92 246 / 0.18);
+      }
+
+      .fit-select {
+        appearance: none;
+        background-image: linear-gradient(45deg, transparent 50%, var(--smoke-white) 50%),
+          linear-gradient(135deg, var(--smoke-white) 50%, transparent 50%);
+        background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+        background-size: 6px 6px, 6px 6px;
+        background-repeat: no-repeat;
+        padding-right: 2.25rem;
+      }
+
+      .fit-select option {
+        background: var(--matte-black);
+        color: var(--pure-white);
+      }
+
+      .fit-textarea {
+        min-height: 7rem;
+        resize: vertical;
+        font-family: var(--font-body);
+        line-height: 1.5;
+      }
+
+      /* Honeypot — hidden from humans, visible to bots */
+      .fit-honey {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .fit-submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 1.15rem 1.5rem;
+        border: none;
+        border-radius: 0.85rem;
+        background: var(--pure-white);
+        color: var(--deep-ink);
+        font-family: var(--font-body);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      .fit-submit:hover:not(:disabled) {
+        background: var(--electric-violet);
+        color: var(--pure-white);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px -8px rgb(139 92 246 / 0.55);
+      }
+
+      .fit-submit:disabled {
+        cursor: progress;
+        opacity: 0.65;
+      }
+
+      .fit-form-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 0.25rem;
+        font-size: 0.78rem;
+        color: var(--slate-text);
+      }
+
+      .fit-form-foot a {
+        color: var(--smoke-white);
+        text-decoration: underline;
+        text-decoration-color: rgb(255 255 255 / 0.25);
+        text-underline-offset: 0.25em;
+        transition: text-decoration-color 0.2s ease;
+      }
+
+      .fit-form-foot a:hover {
+        text-decoration-color: var(--electric-violet);
+      }
+
+      .fit-form-error {
+        display: none;
+        padding: 0.85rem 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgb(239 68 68 / 0.45);
+        background: rgb(239 68 68 / 0.08);
+        color: var(--smoke-white);
+        font-size: 0.92rem;
+      }
+
+      .fit-form-error.is-visible {
+        display: block;
+      }
+
+      /* Success state */
+      .fit-success {
+        display: none;
+        gap: 1.25rem;
+        text-align: left;
+        animation: fit-success-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      .fit-success.is-visible {
+        display: grid;
+      }
+
+      .fit-success-mark {
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--electric-violet), var(--laser-cyan));
+        box-shadow: 0 12px 36px -10px rgb(139 92 246 / 0.6);
+      }
+
+      .fit-success-mark svg {
+        width: 1.4rem;
+        height: 1.4rem;
+        color: var(--pure-white);
+      }
+
+      .fit-success h2 {
+        font-family: var(--font-headline);
+        font-size: clamp(1.6rem, 3vw, 2.1rem);
+        margin: 0;
+        color: var(--pure-white);
+      }
+
+      .fit-success p {
+        color: var(--slate-text);
+        line-height: 1.55;
+      }
+
+      .fit-success-meta {
+        display: grid;
+        gap: 0.5rem;
+        padding: 1rem 1.1rem;
+        border-radius: 0.85rem;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background: rgb(3 3 3 / 0.5);
+        font-size: 0.9rem;
+        color: var(--smoke-white);
+      }
+
+      .fit-success-meta strong {
+        font-weight: 700;
+        color: var(--pure-white);
+      }
+
+      @keyframes fit-success-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       @media (width <= 920px) {
         .fit-grid {
           grid-template-columns: 1fr;
         }
 
         .fit-meta {
+          grid-template-columns: 1fr;
+        }
+
+        .fit-row {
           grid-template-columns: 1fr;
         }
       }
@@ -244,35 +484,188 @@
           </div>
         </article>
 
-        <aside class="fit-panel fit-box">
+        <aside class="fit-panel fit-box" id="fit-intake">
           <div>
-            <h2>Send this brief</h2>
+            <h2>Send the brief</h2>
             <p>
-              Email the outline below and we will reply with fit, next steps, and invoice instructions for
-              the Delphi Fit Check.
+              Eight short answers. We reply within 1-2 business days with fit, platform direction, and
+              invoice instructions for the Delphi Fit Check.
             </p>
           </div>
-          <div class="fit-email-template">Business name:
-Website URL:
-Main contact:
-Current platform:
-Current monthly website cost:
-Approximate page count:
-Blog or large content archive?:
-Any forms, payments, booking, or portal features?:
-Do rankings from Google matter?:
-Do you have access to hosting, DNS, and the current CMS?:
-Preferred launch window:
-What would make this migration feel successful?</div>
-          <div class="fit-cta-row">
-            <a
-              href="mailto:hello@toledotechnologies.com?subject=SiteLift%20Delphi%20Fit%20Check&body=Business%20name:%0AWebsite%20URL:%0AMain%20contact:%0ACurrent%20platform:%0ACurrent%20monthly%20website%20cost:%0AApproximate%20page%20count:%0ABlog%20or%20large%20content%20archive?:%0AAny%20forms,%20payments,%20booking,%20or%20portal%20features?:%0ADo%20rankings%20from%20Google%20matter?:%0ADo%20you%20have%20access%20to%20hosting,%20DNS,%20and%20the%20current%20CMS?:%0APreferred%20launch%20window:%0AWhat%20would%20make%20this%20migration%20feel%20successful?:"
-              class="massive-cta"
-            >Email the brief</a>
-            <a href="mailto:hello@toledotechnologies.com" class="tier-btn">Contact directly</a>
+
+          <form
+            class="fit-form"
+            id="fit-form"
+            action="https://formsubmit.co/hello@toledotechnologies.com"
+            method="POST"
+            novalidate
+          >
+            <input type="hidden" name="_subject" value="SiteLift — Delphi Fit Check intake" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input
+              type="text"
+              name="_honey"
+              class="fit-honey"
+              tabindex="-1"
+              autocomplete="off"
+              aria-hidden="true"
+            />
+
+            <div class="fit-row">
+              <div class="fit-field">
+                <label class="fit-label" for="fit-name">Your name <span class="req">*</span></label>
+                <input
+                  class="fit-input"
+                  type="text"
+                  id="fit-name"
+                  name="Name"
+                  required
+                  autocomplete="name"
+                  placeholder="Full name"
+                />
+              </div>
+              <div class="fit-field">
+                <label class="fit-label" for="fit-email">Email <span class="req">*</span></label>
+                <input
+                  class="fit-input"
+                  type="email"
+                  id="fit-email"
+                  name="Email"
+                  required
+                  autocomplete="email"
+                  placeholder="you@company.com"
+                />
+              </div>
+            </div>
+
+            <div class="fit-row">
+              <div class="fit-field">
+                <label class="fit-label" for="fit-business">Business name</label>
+                <input
+                  class="fit-input"
+                  type="text"
+                  id="fit-business"
+                  name="Business"
+                  autocomplete="organization"
+                  placeholder="Company or brand"
+                />
+              </div>
+              <div class="fit-field">
+                <label class="fit-label" for="fit-url">Website URL <span class="req">*</span></label>
+                <input
+                  class="fit-input"
+                  type="url"
+                  id="fit-url"
+                  name="Website"
+                  required
+                  inputmode="url"
+                  placeholder="https://"
+                />
+              </div>
+            </div>
+
+            <div class="fit-row">
+              <div class="fit-field">
+                <label class="fit-label" for="fit-platform">Current platform <span class="req">*</span></label>
+                <select class="fit-select" id="fit-platform" name="Current platform" required>
+                  <option value="" disabled selected>Select one</option>
+                  <option>WordPress</option>
+                  <option>Squarespace</option>
+                  <option>Wix</option>
+                  <option>Webflow</option>
+                  <option>Shopify</option>
+                  <option>Ghost</option>
+                  <option>Custom / other</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+              <div class="fit-field">
+                <label class="fit-label" for="fit-cost">Monthly website cost</label>
+                <select class="fit-select" id="fit-cost" name="Monthly cost">
+                  <option value="" disabled selected>Select range</option>
+                  <option>Under $50</option>
+                  <option>$50 - $150</option>
+                  <option>$150 - $300</option>
+                  <option>$300 - $500</option>
+                  <option>$500+</option>
+                  <option>Not sure</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="fit-row">
+              <div class="fit-field">
+                <label class="fit-label" for="fit-pages">Approximate page count</label>
+                <select class="fit-select" id="fit-pages" name="Page count">
+                  <option value="" disabled selected>Select range</option>
+                  <option>1 - 5 pages</option>
+                  <option>6 - 15 pages</option>
+                  <option>16 - 30 pages</option>
+                  <option>30+ pages</option>
+                  <option>Large content archive</option>
+                </select>
+              </div>
+              <div class="fit-field">
+                <label class="fit-label" for="fit-window">Preferred launch window</label>
+                <select class="fit-select" id="fit-window" name="Launch window">
+                  <option value="" disabled selected>Select one</option>
+                  <option>ASAP</option>
+                  <option>Within 30 days</option>
+                  <option>30 - 60 days</option>
+                  <option>60 - 90 days</option>
+                  <option>No specific date</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="fit-field">
+              <label class="fit-label" for="fit-notes">
+                What hurts most about the current site? <span class="req">*</span>
+              </label>
+              <textarea
+                class="fit-textarea"
+                id="fit-notes"
+                name="Notes"
+                required
+                placeholder="Cost, plugin chaos, SEO worries, editability, performance — whatever the real reason is."
+              ></textarea>
+            </div>
+
+            <div class="fit-form-error" id="fit-form-error" role="alert">
+              Something went wrong sending the form. Email
+              <a href="mailto:hello@toledotechnologies.com">hello@toledotechnologies.com</a> directly.
+            </div>
+
+            <button type="submit" class="fit-submit" id="fit-submit">
+              <span>Send the brief</span>
+            </button>
+
+            <div class="fit-form-foot">
+              <span>No newsletters. No resale. Reply within 1-2 business days.</span>
+              <a href="mailto:hello@toledotechnologies.com">Prefer email?</a>
+            </div>
+          </form>
+
+          <div class="fit-success" id="fit-success" role="status" aria-live="polite">
+            <div class="fit-success-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="5 12 10 17 19 7" />
+              </svg>
+            </div>
+            <h2>Brief received.</h2>
+            <p>
+              We will review the details and reply within 1-2 business days with package fit, destination
+              platform direction, and Delphi Fit Check invoice instructions.
+            </p>
+            <div class="fit-success-meta">
+              <span><strong>Next:</strong> A reply from hello@toledotechnologies.com.</span>
+              <span><strong>Fit check fee:</strong> $750 fixed. 50% credited if you proceed.</span>
+            </div>
           </div>
+
           <p class="fit-side-note">
-            If the fit check reveals a heavier migration, we route the work into Aegis, Odyssey, or
+            If the brief reveals a heavier migration, we route the work into Aegis, Odyssey, or
             Elysian with the risk already surfaced.
           </p>
         </aside>
@@ -300,6 +693,51 @@ What would make this migration feel successful?</div>
       </div>
     </footer>
 
+    <script>
+      (function () {
+        var form = document.getElementById('fit-form');
+        if (!form) return;
+        var submit = document.getElementById('fit-submit');
+        var errorBox = document.getElementById('fit-form-error');
+        var successBox = document.getElementById('fit-success');
+        var submitLabel = submit.querySelector('span');
+        var originalLabel = submitLabel.textContent;
+
+        form.addEventListener('submit', function (event) {
+          event.preventDefault();
+          errorBox.classList.remove('is-visible');
+
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
+
+          submit.disabled = true;
+          submitLabel.textContent = 'Sending…';
+
+          var data = new FormData(form);
+          fetch('https://formsubmit.co/ajax/hello@toledotechnologies.com', {
+            method: 'POST',
+            headers: { Accept: 'application/json' },
+            body: data,
+          })
+            .then(function (response) {
+              if (!response.ok) throw new Error('Network response was not ok');
+              return response.json();
+            })
+            .then(function () {
+              form.style.display = 'none';
+              successBox.classList.add('is-visible');
+              successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            })
+            .catch(function () {
+              errorBox.classList.add('is-visible');
+              submit.disabled = false;
+              submitLabel.textContent = originalLabel;
+            });
+        });
+      })();
+    </script>
     <script type="module" src="../script.js"></script>
   </body>
 </html>

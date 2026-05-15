@@ -33,6 +33,13 @@ export default [
         plugins: {
             html,
         },
+        languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'script',
+            globals: {
+                ...globals.browser,
+            },
+        },
     },
     prettier,
 ];
