@@ -17,7 +17,7 @@ export const initCursor = (cursor) => {
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-    });
+    }, { passive: true });
 
     const animateCursor = () => {
         const easing = 0.15;
@@ -28,9 +28,14 @@ export const initCursor = (cursor) => {
             cursor.classList.contains('is-hovering') ? 'scale(4)' : 'scale(1)'
         }`;
 
-        requestAnimationFrame(animateCursor);
+        if (!document.hidden) {
+            requestAnimationFrame(animateCursor);
+        }
     };
     animateCursor();
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) animateCursor();
+    });
 
     const interactives = document.querySelectorAll(
         'a, button, .tier-card, .massive-cta, .menu-toggle'
