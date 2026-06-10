@@ -22,20 +22,21 @@ A complete rejection of "cookie-cutter" SaaS templates in favor of a high-end, a
 - **[2026-05-09] Pricing Audit:** Flagship "Aegis" tier locked at $8,500; hosting at $20/mo (Vercel Pro).
 - **[2026-05-09] Brand Integration:** Integrated "Laser Cyan" (#06B6D4) as the single brand accent and implemented the logo as a fragmented background motif.
 - **[2026-05-09] Performance Lock:** Committed to Vanilla HTML/CSS/JS with zero dependencies to ensure raw speed.
+- **[2026-06-09] Pricing Reconciliation:** Package tiers aligned to the live site / pricing-docs authority (supersedes the 2026-05-09 single-price audit values below).
 
 ## Accurate Product Data
 
-- **Hosting Baseline:** $20/month (Vercel Pro).
-- **Flagship Project:** $8,500 (Aegis package).
+- **Hosting Baseline:** $20/month (Vercel Pro, client-site stack target).
+- **Flagship Project:** $7,500–$12,500 (Aegis package).
 - **ROI:** 9-29 month payback period.
 - **Service Mark:** SiteLift.
 
 ## Package Tiers
 
-- **Arcadia:** $4,500 (Essential vitality).
-- **Aegis:** $8,500 (Flagship transformation).
-- **Odyssey:** $14,500 (Deep ecosystem scale).
-- **Elysian:** $27,500+ (Dedicated technical artistry).
+- **Arcadia:** $3,500–$5,500 (Essential vitality).
+- **Aegis:** $7,500–$12,500 (Flagship transformation).
+- **Odyssey:** $15,000–$30,000 (Deep ecosystem scale).
+- **Elysian:** $30,000–$65,000+ (Dedicated technical artistry).
 
 ## Artefact Index
 

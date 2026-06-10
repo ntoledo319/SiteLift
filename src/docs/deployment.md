@@ -1,33 +1,35 @@
 # Deployment: SiteLift
 
 ## Hosting Provider
-- **Platform**: Vercel (Pro recommended)
+- **Platform**: GRACE OVH VPS (`15.204.209.97`) — host Caddy + Let's Encrypt.
 - **Primary Domain**: `sitelift.toledotechnologies.com`
+- **Webroot**: `/var/www/toledo/sitelift.toledotechnologies.com/current` (atomic release symlink).
 
-## Build Settings (Vercel)
-The project is configured via `vercel.json` and `vite.config.js`.
+> **History:** the site originally deployed on Vercel; `vercel.json` remains in the repo as legacy config. DNS now points at the GRACE VPS — do **not** rely on Vercel deploys, and treat any still-linked Vercel project as dormant.
 
-- **Framework Preset**: Vite
-- **Build Command**: `npm run build`
+## Build
+- **Build Command**: `npm run build` (Vite)
 - **Output Directory**: `dist`
 - **Install Command**: `npm install`
 
-## Routing
-- **Clean URLs**: Enabled (`/fit-check/` instead of `/fit-check/index.html`).
-- **Trailing Slashes**: Enforced for SEO consistency.
-- **SPA Fallback**: Configured to redirect all non-file requests to `index.html` (handled by `vercel.json`).
+## Deploy (atomic, zero-downtime)
+Stream the built `dist/` to the VPS as a timestamped release, then atomically flip the `current` symlink (the pattern used by all Toledo static sites; 5 releases retained for rollback):
 
-## Environment Variables
-Currently, no runtime environment variables are required. If adding backend integrations (e.g., custom webhooks), use the `VITE_` prefix for client-side access.
-
-## Manual Deployment
-If using the Vercel CLI:
 ```bash
-vercel --prod
+npm run build
+bash /Users/nicholastoledo/Development/business-ops/system-reconciliation/deploy-static.sh dist sitelift.toledotechnologies.com
 ```
 
+Rollback: on the VPS, repoint `current` to the previous directory under `releases/`.
+
+## Routing
+- **Clean URLs / trailing slashes**: handled by Caddy (directory URLs canonicalize; both `/fit-check` and `/fit-check/` resolve).
+
+## Environment Variables
+None required at runtime. If adding backend integrations (e.g., custom webhooks), use the `VITE_` prefix for client-side access.
+
 ## Post-Deployment Validation
-After each deploy, run the following:
-1. **Lighthouse Check**: Ensure Performance and SEO remain at 100.
-2. **Form Check**: Verify the Fit Check form correctly posts to FormSubmit.
-3. **Cross-Link Check**: Ensure the "Back to Home" links resolve correctly.
+1. **Lighthouse Check**: ensure category scores stay ≥ 0.9 (CI asserts this via `.lighthouserc.json`).
+2. **Form Check**: verify the Fit Check form posts to FormSubmit.
+3. **Cross-Link Check**: ensure "Back to Home" links resolve.
+4. `curl -s -o /dev/null -w '%{http_code}' https://sitelift.toledotechnologies.com/fit-check/` → expect `200`.

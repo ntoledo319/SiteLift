@@ -10,7 +10,7 @@
 
 ## Product Data (Single Source of Truth)
 
-- **Flagship Package:** "Aegis" — Starting at **$8,500**.
+- **Flagship Package:** "Aegis" — **$7,500–$12,500**.
 - **Hosting Baseline:** **$20/month** (default stack: Vercel Pro + Cloudflare Pages CMS).
 - **ROI Narrative:** Typical payback period is **9-29 months**.
 - **Platform Disclosure:** Always include the note: _"Other hosting platforms available upon request and may lead to price adjustment."_
