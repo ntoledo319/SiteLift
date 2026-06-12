@@ -20,3 +20,13 @@
 - **Production Files:** Root level (`index.html`, `style.css`, `script.js`).
 - **Design Docs:** `/docs/designpowers/` (briefs, evaluations).
 - **Assets:** `/assets/images/`.
+
+## Deployment (this repo)
+
+The marketing site itself is hosted on the G.R.A.C.E. VPS, **not** Vercel (the
+$20/mo Vercel Pro stack above is the *client offer*, unrelated to this repo's
+hosting). Pushing to `main` IS the deployment: `.github/workflows/deploy.yml`
+builds `dist/` and ships an atomic release to the VPS, then verifies the
+pushed SHA is live. Details: `src/docs/deployment.md` and
+`grace-complete/deploy/sites/toledo/README.md`. Never reintroduce
+`vercel.json` or rely on a Vercel project.
