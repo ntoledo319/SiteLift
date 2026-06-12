@@ -1,0 +1,95 @@
+name: Deploy to G.R.A.C.E. VPS
+
+# Git auto-deploy pipeline (Render/Vercel-style): every push to `main` builds
+# the Vite static site and ships it to the G.R.A.C.E. VPS, which serves
+# sitelift.toledotechnologies.com behind host Caddy.
+#
+# The deploy uses a least-privilege SSH key whose authorized_keys entry pins a
+# forced command (/home/ubuntu/bin/deploy-toledo-sitelift), so this key can ONLY
+# run the release script on the box — never a shell or sudo. The release
+# script swaps an atomic `current` symlink, so a deploy is instant and
+# reversible. See grace-complete/deploy/sites/toledo/README.md.
+#
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   VPS_SSH_KEY     - private half of this site's dedicated deploy key (ed25519)
+#   VPS_HOST        - 15.204.209.97
+#   VPS_USER        - ubuntu
+#   VPS_KNOWN_HOSTS - pinned host key line (output of `ssh-keyscan -t ed25519 <host>`)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Never let two deploys race; the latest push wins.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Sanity-check build output + stamp version
+        run: |
+          test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
+          # Build stamp so the verify step can prove the NEW build is live.
+          printf '%s\n' "$GITHUB_SHA" > dist/version.txt
+
+      - name: Deploy to VPS (atomic release over SSH)
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 600 "$HOME/.ssh/deploy_key"
+          # Pin the host key (stored as a secret) — no scan-time TOFU.
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          # The server's forced command ignores any remote command and reads
+          # the build tarball from stdin.
+          tar czf - -C dist . | ssh \
+            -i "$HOME/.ssh/deploy_key" \
+            -o UserKnownHostsFile="$HOME/.ssh/known_hosts" \
+            -o StrictHostKeyChecking=yes \
+            -o BatchMode=yes \
+            "${VPS_USER}@${VPS_HOST}"
+
+      - name: Clean up SSH material
+        if: always()
+        run: rm -f "$HOME/.ssh/deploy_key" "$HOME/.ssh/known_hosts"
+
+      - name: Verify the new build is live
+        run: |
+          set -euo pipefail
+          want="$GITHUB_SHA"
+          for i in $(seq 1 8); do
+            got=$(curl -fsS --max-time 10 https://sitelift.toledotechnologies.com/version.txt 2>/dev/null | tr -d '[:space:]' || true)
+            echo "attempt $i: live version='${got}' want='${want}'"
+            [ "$got" = "$want" ] && { echo "✓ new build is serving"; exit 0; }
+            sleep 6
+          done
+          echo "live site did not report the new build version after deploy" >&2
+          exit 1

@@ -40,3 +40,18 @@ npm run build
 - OG asset: [`public/og-image.svg`](./public/og-image.svg)
 - Favicon: [`public/favicon.svg`](./public/favicon.svg)
 - Crawl files: [`public/robots.txt`](./public/robots.txt), [`public/sitemap.xml`](./public/sitemap.xml)
+
+## Deployment
+
+Every push to `main` deploys automatically. `.github/workflows/deploy.yml`
+builds the site (`npm ci && npm run build` → `dist/`), stamps `version.txt` with the commit SHA, and streams the payload over
+SSH to the G.R.A.C.E. VPS (`15.204.209.97`). A forced-command release script
+(`/home/ubuntu/bin/deploy-toledo-sitelift`) extracts it into a timestamped release and atomically
+swaps the `current` symlink that host Caddy serves at `sitelift.toledotechnologies.com`; the workflow
+then polls `https://sitelift.toledotechnologies.com/version.txt` until the new build is provably live.
+
+DNS is authoritative at Porkbun (`A sitelift.toledotechnologies.com` → the VPS). Server-side pieces are
+documented in the grace-complete repo at `deploy/sites/toledo/README.md`.
+Required GitHub Actions secrets: `VPS_SSH_KEY`, `VPS_HOST`, `VPS_USER`,
+`VPS_KNOWN_HOSTS`. Rollback: repoint `current` to a previous release (the
+newest 5 are retained), or revert the commit and push.
