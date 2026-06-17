@@ -7,6 +7,15 @@ Marketing site for `sitelift.toledotechnologies.com`. SiteLift is the productize
 - `/` — positioning, ROI story, package bands, and primary conversion
 - `/fit-check/` — paid Delphi Fit Check intake and routing page
 
+## Lead capture
+
+The Delphi Fit Check intake form submits to the G.R.A.C.E. lead bus at
+`https://eolkits.com/api/v1/lead` for durable capture: every submission is
+recorded to a database and emails the owner on a working mail path. This
+replaced the old FormSubmit flow, which was dead at mxroute and silently
+dropped submissions. The form posts via AJAX `fetch` and renders an in-page
+success state from the endpoint's JSON (`{ok, lead_id}`); it does not redirect.
+
 ## Stack
 
 - Vite multi-page build with `src/` as the root
