@@ -833,9 +833,11 @@ footer .footer-col span {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+
     html {
         scroll-behavior: auto !important;
     }
+
     .reveal-text .word,
     .reveal-text .char {
         transform: none !important;
