@@ -819,3 +819,25 @@ footer .footer-col span {
 .reveal-text.is-visible .char {
     transform: translateY(0);
 }
+
+/* Accessibility: honor the OS "reduce motion" setting. Normal visitors are completely
+   unaffected. For people who've asked their device to minimize motion, this near-disables
+   CSS animations/transitions/smooth-scroll and shows reveal text immediately instead of
+   sliding it in — so the site doesn't trigger motion discomfort. Additive only. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    html {
+        scroll-behavior: auto !important;
+    }
+    .reveal-text .word,
+    .reveal-text .char {
+        transform: none !important;
+    }
+}
