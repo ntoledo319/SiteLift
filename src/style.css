@@ -9,8 +9,9 @@
     --pure-white: #fff;
     --smoke-white: #f8fafc;
     --slate-text: #94a3b8;
-    --font-headline: 'Fraunces', serif;
-    --font-body: 'Inter', sans-serif;
+    --font-headline: 'Lora', serif;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
     --gutter: 5vw;
     --section-pad: 20vh;
 }
