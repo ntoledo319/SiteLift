@@ -59,6 +59,15 @@ SSH to the G.R.A.C.E. VPS (`15.204.209.97`). A forced-command release script
 swaps the `current` symlink that host Caddy serves at `sitelift.toledotechnologies.com`; the workflow
 then polls `https://sitelift.toledotechnologies.com/version.txt` until the new build is provably live.
 
+The CI pipeline is unchanged (same four secrets, same `tar | ssh` over the forced-command key, same
+`version.txt` gate). What changed on 2026-07-03: the box release script was regenerated from the
+shared static template (`deploy/sites/_template/deploy-static.sh.tmpl`), so every deploy now logs a
+deploy event into G.R.A.C.E. — `published` on success, `failed` if the release aborts before publish
+— visible on the "Living Fleet" hosting dashboard at `https://graceai.love/hosting` and via
+`GET /api/v1/hosting/toledo-sitelift/deploys`. The canonical copy of this site's release script is
+`deploy/sites/toledo/deploy-toledo-sitelift.sh` in grace-complete; edit there and reinstall on the
+box, never hand-edit the live script.
+
 DNS is authoritative at Porkbun (`A sitelift.toledotechnologies.com` → the VPS). Server-side pieces are
 documented in the grace-complete repo at `deploy/sites/toledo/README.md`.
 Required GitHub Actions secrets: `VPS_SSH_KEY`, `VPS_HOST`, `VPS_USER`,
