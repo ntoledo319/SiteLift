@@ -1,16 +1,16 @@
 # SiteLift — WordPress-exit website migrations (Toledo Technologies)
 
-Get off WordPress without losing your SEO, your content, or your weekends. SiteLift moves your
-site to a fast, secure, low-maintenance stack — you keep your rankings and own every account.
-By Toledo Technologies, a Connecticut web studio run by Nicholas Toledo. Serves Connecticut
-businesses in person and clients nationwide remotely.
+SiteLift is a productized route off WordPress with explicit controls for content, redirects,
+forms, access, and account ownership. It targets a faster, lower-maintenance stack without
+promising a ranking or cost outcome before the current site is assessed. By Toledo Technologies,
+a Connecticut web studio run by Nicholas Toledo and available for United States engagements.
 
 Contact: hello@toledotechnologies.com · https://sitelift.toledotechnologies.com
 
 ## What it is
-- A productized WordPress-exit migration. Fixed scope, fixed price, no surprises.
+- A productized WordPress-exit migration quoted after a $750 Delphi Fit Check.
 - Arcadia (simple 3–7 page sites) from $3,500. Aegis (standard small-business migration) ~$9,500.
-- SEO preserved (redirects mapped), content + media migrated, hosting ~$20/mo, you own all accounts.
+- SEO-sensitive elements are inventoried and redirects are mapped; the default hosting target is $20/mo before overages and third-party services; you own all accounts.
 
 ## Good fit
 Small businesses tired of WordPress updates, plugin bloat, security scares, and slow hosting —

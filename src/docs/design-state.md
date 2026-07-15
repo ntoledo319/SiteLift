@@ -28,8 +28,8 @@ A complete rejection of "cookie-cutter" SaaS templates in favor of a high-end, a
 
 - **Hosting Baseline:** $20/month (Vercel Pro, client-site stack target).
 - **Flagship Project:** $7,500–$12,500 (Aegis package).
-- **ROI:** 9-29 month payback period.
-- **Service Mark:** SiteLift.
+- **ROI:** Estimated 20–34 months at the $9,500 default quote when current cost is $300–$500/mo and the target baseline is $20/mo; show the calculation and exclusions wherever used.
+- **Product name:** SiteLift. Do not claim registration or trademark status without legal verification.
 
 ## Package Tiers
 
@@ -49,4 +49,4 @@ A complete rejection of "cookie-cutter" SaaS templates in favor of a high-end, a
 
 - **Strategist → Lead → Implementation:** All phases complete.
 - **Creative Director:** Final approval granted (Grade: A+).
-- **Verification:** 100/100 performance architecture confirmed.
+- **Verification:** `npm run lint`, `npm test`, and `npm run build` are the release gates; Lighthouse scores are measured per deployed build rather than claimed in advance.

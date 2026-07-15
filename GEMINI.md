@@ -4,7 +4,7 @@
 
 - **Naming:** The service is strictly named **SiteLift**.
 - **Performance:** All frontend work must target a **100/100 Lighthouse score**. Use vanilla HTML/CSS/JS only. No external JS libraries or heavy frameworks allowed without explicit approval.
-- **Styling:** Adhere to the **High-Impact Editorial** aesthetic. Use radical asymmetry, overlapping grid layouts, and massive typography (using the Fraunces/Inter pairing).
+- **Styling:** Adhere to the **High-Impact Editorial** aesthetic. Use radical asymmetry, overlapping grid layouts, and massive typography (using the current Lora/Outfit pairing).
 - **Assets:** Utilize **Laser Cyan (#06B6D4)** as the primary brand accent. Implement the "chopped up" logo motif as fragmented, parallax-driven background watermarks.
 - **Imagery:** Prefer high-resolution architectural and abstract light photography (curated via Unsplash with performance query params).
 
@@ -12,14 +12,14 @@
 
 - **Flagship Package:** "Aegis" — **$7,500–$12,500**.
 - **Hosting Baseline:** **$20/month** (default stack: Vercel Pro + Cloudflare Pages CMS).
-- **ROI Narrative:** Typical payback period is **9-29 months**.
+- **ROI Narrative:** Show payback only as an estimate with its inputs. At the `$9,500` Aegis default quote and `$300–$500/mo` current cost against a `$20/mo` target baseline, the estimate is **about 20–34 months**. The full Aegis band under those assumptions is roughly **16–45 months**.
 - **Platform Disclosure:** Always include the note: _"Other hosting platforms available upon request and may lead to price adjustment."_
 
 ## Project Structure
 
-- **Production Files:** Root level (`index.html`, `style.css`, `script.js`).
-- **Design Docs:** `/docs/designpowers/` (briefs, evaluations).
-- **Assets:** `/assets/images/`.
+- **Production Files:** `src/index.html`, `src/fit-check/index.html`, `src/style.css`, and `src/script.js`.
+- **Design Docs:** `src/docs/`.
+- **Public Assets:** `src/public/` because Vite's root is `src`.
 
 ## Deployment (this repo)
 

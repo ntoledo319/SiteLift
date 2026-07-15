@@ -9,15 +9,20 @@
  */
 export const initCursor = (cursor) => {
     if (!cursor) return;
+    document.body?.classList.add('has-custom-cursor');
     let mouseX = 0,
         mouseY = 0;
     let cursorX = 0,
         cursorY = 0;
 
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    }, { passive: true });
+    document.addEventListener(
+        'mousemove',
+        (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        },
+        { passive: true }
+    );
 
     const animateCursor = () => {
         const easing = 0.15;
@@ -54,11 +59,21 @@ export const initCursor = (cursor) => {
  */
 export const initMobileMenu = (toggle, links, body) => {
     if (!toggle || !links || !body) return;
-    toggle.addEventListener('click', () => {
-        const isActive = toggle.classList.toggle('is-active');
-        links.classList.toggle('is-active');
-        body.classList.toggle('menu-open');
+
+    const setActive = (isActive) => {
+        toggle.classList.toggle('is-active', isActive);
+        links.classList.toggle('is-active', isActive);
+        body.classList.toggle('menu-open', isActive);
         toggle.setAttribute('aria-expanded', String(isActive));
+    };
+
+    toggle.addEventListener('click', () => {
+        setActive(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || toggle.getAttribute('aria-expanded') !== 'true') return;
+        setActive(false);
+        toggle.focus();
     });
 };
 
@@ -144,18 +159,76 @@ export const updateParallax = (scrollY) => {
 };
 
 /**
+ * Enhances reveal elements when the platform can observe them. Content stays visible when
+ * JavaScript, IntersectionObserver, or animation support is unavailable.
+ * @param {object} options - Reveal initialization options.
+ * @param {HTMLElement} options.root - Root element that gates enhanced reveal styles.
+ * @param {Iterable<HTMLElement>} options.elements - Elements to observe.
+ * @param {typeof IntersectionObserver | null} options.Observer - Observer constructor.
+ * @param {boolean} options.reduceMotion - Whether the visitor requested reduced motion.
+ * @returns {IntersectionObserver | null} The active observer, when enhancement is enabled.
+ */
+export const initScrollReveals = ({
+    root = document.documentElement,
+    elements = document.querySelectorAll('[data-scroll-reveal], .reveal-text'),
+    Observer = typeof globalThis.IntersectionObserver === 'function'
+        ? globalThis.IntersectionObserver
+        : null,
+    reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false,
+} = {}) => {
+    const revealElements = Array.from(elements);
+    const revealAll = () =>
+        revealElements.forEach((element) => element.classList.add('is-visible'));
+
+    if (reduceMotion || !Observer) {
+        root.classList.remove('reveal-ready');
+        revealAll();
+        return null;
+    }
+
+    try {
+        const observer = new Observer(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            },
+            { threshold: 0.15 }
+        );
+
+        root.classList.add('reveal-ready');
+        revealElements.forEach((element) => observer.observe(element));
+        return observer;
+    } catch {
+        root.classList.remove('reveal-ready');
+        revealAll();
+        return null;
+    }
+};
+
+/**
  * Bootstraps the application.
  */
 const bootstrap = () => {
     const root = document.documentElement;
     const body = document.body;
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches ?? false;
 
     root.classList.remove('no-js');
-    setTimeout(() => {
-        body.classList.remove('is-loading');
-    }, 500);
+    root.classList.add('js');
+    setTimeout(
+        () => {
+            body.classList.remove('is-loading');
+        },
+        reduceMotion ? 0 : 500
+    );
 
-    initCursor(document.getElementById('cursor'));
+    if (!reduceMotion && !coarsePointer) {
+        initCursor(document.getElementById('cursor'));
+    }
     initMobileMenu(
         document.getElementById('menu-toggle'),
         document.querySelector('.nav-links'),
@@ -163,35 +236,24 @@ const bootstrap = () => {
     );
     splitTexts();
 
-    let ticking = false;
-    window.addEventListener(
-        'scroll',
-        () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    updateParallax(window.scrollY);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        },
-        { passive: true }
-    );
-
-    const revealObserver = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
+    if (!reduceMotion) {
+        let ticking = false;
+        window.addEventListener(
+            'scroll',
+            () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        updateParallax(window.scrollY);
+                        ticking = false;
+                    });
+                    ticking = true;
                 }
-            });
-        },
-        { threshold: 0.15 }
-    );
+            },
+            { passive: true }
+        );
+    }
 
-    document.querySelectorAll('[data-scroll-reveal], .reveal-text').forEach((el) => {
-        revealObserver.observe(el);
-    });
+    initScrollReveals({ root, reduceMotion });
 };
 
 // Run bootstrap when DOM is ready, unless in a test environment

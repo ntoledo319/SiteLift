@@ -2,15 +2,17 @@
 
 ## System Overview
 
-SiteLift is a high-performance, vanilla HTML/CSS/JS marketing site designed with an "Editorial Impact" aesthetic. It prioritizes low-latency, sovereign data ownership, and a perfect Lighthouse score (100/100).
+SiteLift is a static vanilla HTML/CSS/JS marketing site with an "Editorial Impact" aesthetic. It prioritizes low-latency delivery, explicit account and ownership terms, and measurable release checks without publishing unsupported score claims.
 
 ## Main Modules & Responsibilities
 
 ### Frontend Structure
 
-- **index.html**: Canonical entry point. Uses semantic HTML5 and a modular script approach.
-- **style.css**: Uses CSS Variables (tokens) for theming and layouts. Employs modern features like `clip-path` and `mask-image` for high-impact visuals without external assets.
-- **script.js**: ES Module that handles:
+- **`src/index.html`**: Canonical marketing entry point.
+- **`src/fit-check/index.html`**: Five-field paid-discovery intake; only email is required.
+- **`src/privacy/index.html` and `src/terms/index.html`**: Site-specific legal records grounded in Toledo's corporate policy and signed-agreement boundaries.
+- **`src/style.css`**: CSS variables, responsive layout, and visual system.
+- **`src/script.js`**: ES module that handles:
     - Custom cursor tracking with easing.
     - Intersection Observer-based reveals.
     - Throttled scroll parallax.
@@ -18,14 +20,15 @@ SiteLift is a high-performance, vanilla HTML/CSS/JS marketing site designed with
 
 ## Directory Structure
 
-- `/`: Production entry points.
-- `/assets/`: Optimized images and SVG motifs.
-- `/docs/`: Technical documentation and project history.
-- `/test/`: Jest unit tests for UI logic.
+- `src/`: Vite root and production HTML/CSS/JS source.
+- `src/public/`: Deployable favicon, OG, robots, sitemap, and `llms.txt` assets.
+- `src/docs/`: Technical documentation and project history.
+- `src/test/`: Jest unit and content-contract tests.
+- `vite.config.js`: Explicit multi-page build inputs for home, Fit Check, privacy, and terms.
 
 ## Data Flow
 
-The site is entirely static. User interaction is captured via standard `mailto` links or will be routed to a quote-based intake form in the future.
+The site is static except for outbound lead capture. The Fit Check form POSTs to `https://eolkits.com/api/v1/lead`, which stores the inquiry in Toledo's operating lead database and emails the owner; the page renders success or failure in place. Direct `mailto` remains available.
 
 ## Performance Strategy
 
@@ -37,4 +40,5 @@ The site is entirely static. User interaction is captured via standard `mailto` 
 ## Security Boundaries
 
 - **Static Assets**: No backend execution, reducing the attack surface.
-- **No Dependencies**: Minimized external dependency footprint (only dev-time tools).
+- **No client framework**: Runtime code remains vanilla; build, lint, and test dependencies are development-only.
+- **No secrets in the site**: The public form endpoint and routing context are non-secret; credentials remain outside the repository.

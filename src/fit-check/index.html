@@ -142,6 +142,90 @@
         border-top: 1px solid rgb(255 255 255 / 0.1);
       }
 
+      .fit-sample {
+        position: relative;
+        overflow: hidden;
+        padding: 1.35rem;
+        border: 1px solid rgb(6 182 212 / 0.32);
+        border-left: 3px solid var(--laser-cyan);
+        background:
+          linear-gradient(135deg, rgb(6 182 212 / 0.08), transparent 58%),
+          rgb(3 3 3 / 0.55);
+      }
+
+      .fit-sample::after {
+        content: 'SAMPLE';
+        position: absolute;
+        right: -0.2rem;
+        bottom: -1rem;
+        color: rgb(6 182 212 / 0.06);
+        font-family: var(--font-headline);
+        font-size: clamp(3.5rem, 9vw, 6rem);
+        font-weight: 900;
+        pointer-events: none;
+      }
+
+      .fit-sample-kicker {
+        position: relative;
+        z-index: 1;
+        display: block;
+        margin-bottom: 0.75rem;
+        color: var(--laser-cyan);
+        font-family: var(--font-mono);
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .fit-sample h3 {
+        position: relative;
+        z-index: 1;
+        font-size: 1.35rem;
+        line-height: 1;
+      }
+
+      .fit-sample-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        gap: 0.8rem;
+        margin-top: 1.15rem;
+      }
+
+      .fit-sample-row {
+        display: grid;
+        grid-template-columns: minmax(6.5rem, 0.38fr) 1fr;
+        gap: 0.8rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid rgb(255 255 255 / 0.1);
+      }
+
+      .fit-sample-row dt {
+        color: var(--smoke-white);
+        font-family: var(--font-mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .fit-sample-row dd {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-size: 0.88rem;
+      }
+
+      .fit-sample-note {
+        position: relative;
+        z-index: 1;
+        margin-top: 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
       /* Form */
       .fit-form {
         display: grid;
@@ -391,6 +475,23 @@
           grid-template-columns: 1fr;
         }
       }
+
+      @media (width <= 520px) {
+        .fit-panel {
+          padding: 1.35rem;
+          border-radius: 1rem;
+        }
+
+        .fit-sample-row {
+          grid-template-columns: 1fr;
+          gap: 0.35rem;
+        }
+
+        .fit-form-foot {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
     </style>
     <script type="application/ld+json">
       {
@@ -450,7 +551,7 @@
           </div>
           <div>
             <dt>Credit</dt>
-            <dd>50% toward the build deposit</dd>
+            <dd>50% toward the kickoff Project Retainer within 30 days; capped at that Project Retainer; unused credit lapses with no roll-forward</dd>
           </div>
         </dl>
       </section>
@@ -466,6 +567,29 @@
               <li>A quote direction you can use immediately.</li>
             </ul>
           </div>
+          <section class="fit-sample" aria-labelledby="fit-sample-heading">
+            <span class="fit-sample-kicker">Illustrative redacted template // no client data</span>
+            <h3 id="fit-sample-heading">Sample Fit Check excerpt</h3>
+            <dl class="fit-sample-grid">
+              <div class="fit-sample-row">
+                <dt>Observed</dt>
+                <dd>Plugin-dependent forms, legacy URL patterns, and uncertain DNS ownership.</dd>
+              </div>
+              <div class="fit-sample-row">
+                <dt>Direction</dt>
+                <dd>Static-first delivery with an editable CMS, subject to access verification.</dd>
+              </div>
+              <div class="fit-sample-row">
+                <dt>Risk flag</dt>
+                <dd>Redirect mapping and form delivery need pre-launch acceptance checks.</dd>
+              </div>
+              <div class="fit-sample-row">
+                <dt>Package signal</dt>
+                <dd>Aegis range; final scope follows the paid assessment.</dd>
+              </div>
+            </dl>
+            <p class="fit-sample-note">Format preview only—not a completed assessment or customer result.</p>
+          </section>
           <div>
             <h3>Best fit</h3>
             <ul class="fit-checklist">
@@ -491,8 +615,8 @@
           <div>
             <h2>Send the brief</h2>
             <p>
-              Eight short answers. We reply within 1-2 business days with fit, platform direction, and
-              invoice instructions for the Delphi Fit Check.
+              Five short fields. We reply within 1-2 business days with fit, platform direction, and
+              invoice instructions for the Delphi Fit Check. Only email is required.
             </p>
           </div>
 
@@ -501,11 +625,15 @@
             id="fit-form"
             action="https://eolkits.com/api/v1/lead"
             method="POST"
-            novalidate
           >
             <input type="hidden" name="_subject" value="SiteLift — Delphi Fit Check intake" />
             <input type="hidden" name="_template" value="table" />
             <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="product" value="SiteLift" />
+            <input type="hidden" name="source" value="sitelift-fit-check" />
+            <input type="hidden" name="service" value="Delphi Fit Check" />
+            <input type="hidden" name="offer" value="$750 fixed; 100% upfront; 50% credited toward the kickoff Project Retainer within 30 days; capped at that Project Retainer; unused credit lapses with no roll-forward" />
+            <input type="hidden" name="context" value="First-step brief; cost, page count, access, and launch window collected during the paid assessment" />
             <input
               type="text"
               name="_honey"
@@ -517,13 +645,12 @@
 
             <div class="fit-row">
               <div class="fit-field">
-                <label class="fit-label" for="fit-name">Your name <span class="req">*</span></label>
+                <label class="fit-label" for="fit-name">Your name — optional</label>
                 <input
                   class="fit-input"
                   type="text"
                   id="fit-name"
-                  name="Name"
-                  required
+                  name="name"
                   autocomplete="name"
                   placeholder="Full name"
                 />
@@ -534,7 +661,7 @@
                   class="fit-input"
                   type="email"
                   id="fit-email"
-                  name="Email"
+                  name="email"
                   required
                   autocomplete="email"
                   placeholder="you@company.com"
@@ -544,34 +671,19 @@
 
             <div class="fit-row">
               <div class="fit-field">
-                <label class="fit-label" for="fit-business">Business name</label>
-                <input
-                  class="fit-input"
-                  type="text"
-                  id="fit-business"
-                  name="Business"
-                  autocomplete="organization"
-                  placeholder="Company or brand"
-                />
-              </div>
-              <div class="fit-field">
-                <label class="fit-label" for="fit-url">Website URL <span class="req">*</span></label>
+                <label class="fit-label" for="fit-url">Website URL — optional</label>
                 <input
                   class="fit-input"
                   type="url"
                   id="fit-url"
-                  name="Website"
-                  required
+                  name="website"
                   inputmode="url"
                   placeholder="https://"
                 />
               </div>
-            </div>
-
-            <div class="fit-row">
               <div class="fit-field">
-                <label class="fit-label" for="fit-platform">Current platform <span class="req">*</span></label>
-                <select class="fit-select" id="fit-platform" name="Current platform" required>
+                <label class="fit-label" for="fit-platform">Current platform — optional</label>
+                <select class="fit-select" id="fit-platform" name="platform">
                   <option value="" disabled selected>Select one</option>
                   <option>WordPress</option>
                   <option>Squarespace</option>
@@ -583,54 +695,16 @@
                   <option>Not sure</option>
                 </select>
               </div>
-              <div class="fit-field">
-                <label class="fit-label" for="fit-cost">Monthly website cost</label>
-                <select class="fit-select" id="fit-cost" name="Monthly cost">
-                  <option value="" disabled selected>Select range</option>
-                  <option>Under $50</option>
-                  <option>$50 - $150</option>
-                  <option>$150 - $300</option>
-                  <option>$300 - $500</option>
-                  <option>$500+</option>
-                  <option>Not sure</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="fit-row">
-              <div class="fit-field">
-                <label class="fit-label" for="fit-pages">Approximate page count</label>
-                <select class="fit-select" id="fit-pages" name="Page count">
-                  <option value="" disabled selected>Select range</option>
-                  <option>1 - 5 pages</option>
-                  <option>6 - 15 pages</option>
-                  <option>16 - 30 pages</option>
-                  <option>30+ pages</option>
-                  <option>Large content archive</option>
-                </select>
-              </div>
-              <div class="fit-field">
-                <label class="fit-label" for="fit-window">Preferred launch window</label>
-                <select class="fit-select" id="fit-window" name="Launch window">
-                  <option value="" disabled selected>Select one</option>
-                  <option>ASAP</option>
-                  <option>Within 30 days</option>
-                  <option>30 - 60 days</option>
-                  <option>60 - 90 days</option>
-                  <option>No specific date</option>
-                </select>
-              </div>
             </div>
 
             <div class="fit-field">
               <label class="fit-label" for="fit-notes">
-                What hurts most about the current site? <span class="req">*</span>
+                What hurts most about the current site? — optional
               </label>
               <textarea
                 class="fit-textarea"
                 id="fit-notes"
-                name="Notes"
-                required
+                name="notes"
                 placeholder="Cost, plugin chaos, SEO worries, editability, performance — whatever the real reason is."
               ></textarea>
             </div>
@@ -663,7 +737,7 @@
             </p>
             <div class="fit-success-meta">
               <span><strong>Next:</strong> A reply from hello@toledotechnologies.com.</span>
-              <span><strong>Fit check fee:</strong> $750 fixed. 50% credited if you proceed.</span>
+              <span><strong>Fit check fee:</strong> $750 fixed. 50% credited toward the kickoff Project Retainer if you proceed within 30 days, capped at that Project Retainer; unused credit lapses and does not roll forward.</span>
             </div>
           </div>
 
@@ -686,6 +760,8 @@
             <h3>Contact</h3>
             <a href="mailto:hello@toledotechnologies.com">hello@toledotechnologies.com</a>
             <a href="/">Return home</a>
+            <a href="/privacy/">Privacy</a>
+            <a href="/terms/">Terms</a>
           </div>
           <div class="footer-col">
             <h3>Default stack</h3>

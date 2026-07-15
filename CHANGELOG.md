@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Explicitly illustrative, redacted Fit Check format preview.
+- Regression coverage for reveal fail-open behavior, commercial copy, form context, and public assets.
+- Site-specific privacy and terms routes, with build, sitemap, and content-contract coverage.
+- CI lint, Jest, build-artifact, and post-deploy route gates.
+
+### Changed
+- Labeled payback as an estimate and published the calculation, assumptions, and wider package-range outcome.
+- Reduced the first Fit Check brief to five visible fields while preserving hidden lead context.
+- Replaced “Book” language with direct “Start” language for the in-site Fit Check route.
+
+### Fixed
+- Removed the unsupported registered-service-mark statement.
+- Made scroll reveals fail open without JavaScript/IntersectionObserver and immediate under reduced motion.
+- Expanded the mobile-menu control to a 48×48px target and stacked narrow-screen footer content.
+- Moved all Vite public assets under `src/public/` so they are emitted in production builds.
+
 ## [1.0.0] - 2026-07-02
 ### Added
 - Lead forms point at GRACE /api/v1/lead capture.

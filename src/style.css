@@ -33,7 +33,11 @@ body {
     font-family: var(--font-body);
     line-height: 1.5;
     overflow-x: hidden;
-    cursor: none; /* Hide default cursor for custom follower */
+    cursor: auto;
+}
+
+body.has-custom-cursor {
+    cursor: none;
 }
 
 /* Custom Cursor */
@@ -52,6 +56,11 @@ body {
         transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
         opacity 0.3s ease;
     will-change: transform;
+    display: none;
+}
+
+body.has-custom-cursor .cursor-follower {
+    display: block;
 }
 
 /* Grain Overlay */
@@ -201,9 +210,22 @@ h4 {
 .menu-toggle {
     display: none;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 6px;
+    width: 48px;
+    height: 48px;
+    padding: 9px;
+    border: 0;
+    background: transparent;
+    color: var(--pure-white);
     cursor: pointer;
     z-index: 1100;
+}
+
+.menu-toggle:focus-visible {
+    outline: 2px solid var(--laser-cyan);
+    outline-offset: 3px;
 }
 
 .menu-toggle span {
@@ -578,6 +600,42 @@ body:not(.is-loading) .title-underline {
     opacity: 0.7;
 }
 
+.roi-calculation {
+    max-width: 880px;
+    margin: 3rem auto 0;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 1px solid rgb(255 255 255 / 14%);
+    background: linear-gradient(135deg, rgb(6 182 212 / 8%), rgb(139 92 246 / 6%));
+    text-align: left;
+}
+
+.roi-calculation-label {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--laser-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.roi-calculation > p {
+    font-size: clamp(1.1rem, 2.3vw, 1.5rem);
+    line-height: 1.45;
+}
+
+.roi-calculation strong {
+    color: var(--pure-white);
+}
+
+.roi-calculation .roi-assumptions {
+    margin-top: 1.25rem;
+    color: var(--slate-text);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+
 /* Tiers */
 .tiers-section {
     background: var(--smoke-white);
@@ -743,6 +801,8 @@ body:not(.is-loading) .title-underline {
     display: flex;
     justify-content: space-between;
     align-items: start;
+    gap: 4rem;
+    min-width: 0;
 }
 
 .footer-brand p {
@@ -755,6 +815,11 @@ body:not(.is-loading) .title-underline {
 .footer-links {
     display: flex;
     gap: 6rem;
+    min-width: 0;
+}
+
+.footer-col {
+    min-width: 0;
 }
 
 .footer-col h3 {
@@ -774,6 +839,7 @@ footer .footer-col span {
     font-size: 0.9rem;
     margin-bottom: 0.8rem;
     font-weight: 500;
+    overflow-wrap: anywhere;
 }
 
 /* Mobile Adjustments */
@@ -793,14 +859,76 @@ footer .footer-col span {
     }
 }
 
+@media (width <= 640px) {
+    :root {
+        --gutter: 1.25rem;
+        --section-pad: 7rem;
+    }
+
+    .v-header {
+        padding: 1.25rem var(--gutter);
+    }
+
+    .logo-wrapper {
+        gap: 0.65rem;
+    }
+
+    .site-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .logo {
+        font-size: 1.6rem;
+    }
+
+    .math-line {
+        flex-wrap: wrap;
+        gap: 0.35rem 1rem;
+    }
+
+    .tier-card {
+        padding: 3rem 1.5rem;
+    }
+
+    .v-footer {
+        padding: 5rem var(--gutter);
+    }
+
+    .footer-grid,
+    .footer-links {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .footer-grid {
+        gap: 3rem;
+    }
+
+    .footer-links {
+        gap: 2.25rem;
+    }
+
+    .footer-brand,
+    .footer-col {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
 /* Animations State */
 [data-scroll-reveal] {
+    opacity: 1;
+    transform: none;
+}
+
+.reveal-ready [data-scroll-reveal] {
     opacity: 0;
     transform: translateY(30px);
     transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-[data-scroll-reveal].is-visible {
+.reveal-ready [data-scroll-reveal].is-visible {
     opacity: 1;
     transform: translateY(0);
 }
@@ -812,12 +940,16 @@ footer .footer-col span {
 .reveal-text .word,
 .reveal-text .char {
     display: inline-block;
+}
+
+.reveal-ready .reveal-text .word,
+.reveal-ready .reveal-text .char {
     transform: translateY(100%);
     transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.reveal-text.is-visible .word,
-.reveal-text.is-visible .char {
+.reveal-ready .reveal-text.is-visible .word,
+.reveal-ready .reveal-text.is-visible .char {
     transform: translateY(0);
 }
 
@@ -842,5 +974,99 @@ footer .footer-col span {
     .reveal-text .word,
     .reveal-text .char {
         transform: none !important;
+    }
+
+    .reveal-ready [data-scroll-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* Site-specific legal records. These pages stay deliberately quiet and readable while
+   sharing SiteLift's typography, header, and footer. */
+.legal-page {
+    cursor: auto;
+}
+
+.legal-page .cursor-follower {
+    display: none;
+}
+
+.legal-shell {
+    width: min(100%, 1120px);
+    margin: 0 auto;
+    padding: 9rem var(--gutter) 5rem;
+}
+
+.legal-hero {
+    max-width: 52rem;
+    margin-bottom: clamp(3rem, 7vw, 5.5rem);
+}
+
+.legal-hero .section-title {
+    margin-block: 1rem;
+}
+
+.legal-hero p,
+.legal-section p,
+.legal-section li {
+    color: var(--slate-text);
+}
+
+.legal-updated {
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.legal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.legal-section {
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border: 1px solid rgb(255 255 255 / 12%);
+    border-radius: 1.25rem;
+    background: rgb(255 255 255 / 3%);
+}
+
+.legal-section h2,
+.legal-section h3 {
+    margin-bottom: 1rem;
+}
+
+.legal-section p + p,
+.legal-section ul + p,
+.legal-section p + ul {
+    margin-top: 1rem;
+}
+
+.legal-section ul {
+    display: grid;
+    gap: 0.65rem;
+    padding-left: 1.2rem;
+}
+
+.legal-section a {
+    color: var(--laser-cyan);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.legal-section--wide {
+    grid-column: 1 / -1;
+}
+
+@media (width <= 760px) {
+    .legal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .legal-section--wide {
+        grid-column: auto;
     }
 }

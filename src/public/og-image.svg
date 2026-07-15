@@ -21,7 +21,7 @@
   <rect x="76" y="76" width="1048" height="478" rx="34" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.14)" />
   <text x="122" y="234" fill="#ecfeff" font-family="Inter, Arial, sans-serif" font-size="80" font-weight="700">SiteLift</text>
   <text x="122" y="298" fill="#d7eef3" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500">WordPress exit, done right.</text>
-  <text x="122" y="364" fill="#9cc7cf" font-family="'JetBrains Mono', monospace" font-size="20" letter-spacing="4">$750 FIT CHECK · $20/MO DEFAULT STACK · PLATFORM-AGNOSTIC</text>
+  <text x="122" y="364" fill="#9cc7cf" font-family="'JetBrains Mono', monospace" font-size="20" letter-spacing="4">$750 FIT CHECK · $20/MO TARGET BASELINE · PLATFORM-AGNOSTIC</text>
   <g transform="translate(814 132)">
     <circle cx="126" cy="126" r="118" fill="none" stroke="rgba(236,254,255,0.2)" stroke-width="6" />
     <path d="M70 178 L126 90 L112 90 L184 32 L128 122 L142 122 Z" fill="url(#accent)" />

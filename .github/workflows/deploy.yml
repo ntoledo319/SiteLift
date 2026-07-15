@@ -46,12 +46,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify source
+        run: |
+          npm run lint
+          npm test -- --runInBand
+
       - name: Build static site
         run: npm run build
 
       - name: Sanity-check build output + stamp version
         run: |
           test -f dist/index.html || { echo "dist/index.html missing"; exit 1; }
+          test -f dist/fit-check/index.html || { echo "dist/fit-check/index.html missing"; exit 1; }
+          test -f dist/privacy/index.html || { echo "dist/privacy/index.html missing"; exit 1; }
+          test -f dist/terms/index.html || { echo "dist/terms/index.html missing"; exit 1; }
+          test -f dist/sitemap.xml || { echo "dist/sitemap.xml missing"; exit 1; }
           # Build stamp so the verify step can prove the NEW build is live.
           printf '%s\n' "$GITHUB_SHA" > dist/version.txt
 
@@ -93,3 +102,10 @@ jobs:
           done
           echo "live site did not report the new build version after deploy" >&2
           exit 1
+
+      - name: Smoke legal and conversion routes
+        run: |
+          set -euo pipefail
+          for route in / /fit-check/ /privacy/ /terms/ /sitemap.xml; do
+            curl -fsS --max-time 15 "https://sitelift.toledotechnologies.com${route}" >/dev/null
+          done

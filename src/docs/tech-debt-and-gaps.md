@@ -1,11 +1,21 @@
-# Technical Debt and Gaps Analysis: SiteLift
+# Technical debt and evidence gaps: SiteLift
 
-| Priority | Category | Issue | Evidence | Impact | Recommended Fix | Effort | Risk |
-|----------|----------|-------|----------|--------|-----------------|--------|------|
-| P1 | Testing | Low test coverage | only 2 unit tests exist | Regressions likely in UI logic | Expand Jest suite to cover all splitText types and parallax edge cases | S | Low |
-| P1 | Performance | Performance Variability | 0.81-0.97 range | Missing 100/100 target | Further optimize font loading and consider inlining critical CSS variables | S | Low |
-| P2 | Accessibility | Accessibility gaps | stuck at 0.95 | Below 100/100 target | Identify remaining missing labels or contrast issues in Lighthouse report | S | Low |
-| P3 | Infrastructure | Static hosting with webhook | FormSubmit.co dependency | Potential privacy/routing limits | Transition to a small intake-routing service on the GRACE VPS behind Caddy (or a Cloudflare Worker) | S | Low |
+Updated: 2026-07-15
 
-## Critical Next Action
-Perform a **surgical accessibility audit** to identify the specific elements preventing a 100/100 score (currently 0.95), focusing on color contrast in the vibrant Rebirth section or label associations in the new Fit Check form.
+This register describes current source truth. Historical Lighthouse scores and
+the retired FormSubmit route are not treated as present-state evidence.
+
+| Priority | Category | Current gap | Evidence | Next control |
+|---|---|---|---|---|
+| P1 | Customer proof | No publishable paid-customer migration outcome exists yet | The public Fit Check preview is explicitly illustrative | Do not publish a case study until delivery evidence, metric provenance, and written permission exist |
+| P1 | Conversion evidence | A working intake path does not prove that qualified buyers complete it | Source tests cover the five-field, email-only-required contract; real conversion data is unknown | Measure requested Fit Checks and paid conversions without inventing a benchmark |
+| P2 | Intake dependency | Lead capture depends on the Toledo intake service at `https://eolkits.com/api/v1/lead` | `src/fit-check/index.html` and `src/script.js` use that endpoint | Keep the visible error state, monitor endpoint health, and preserve direct email as fallback |
+| P2 | Third-party fonts | Pages request Google Fonts at runtime | Every HTML entry preconnects to and loads `fonts.googleapis.com` | Reassess self-hosting if privacy, availability, or performance evidence justifies the asset work |
+| P2 | Browser coverage | Source and unit tests do not replace release-browser evidence | Browser verification is an explicit release gate | Re-run exact 1440×900 and 390×844 route, overflow, navigation, legal, and form checks for every release |
+
+## Next evidence milestone
+
+After the truth-safe release is live, the next product milestone is one real,
+permissioned Fit Check or migration with preserved before/after artifacts. A
+public result still requires a clear evidence source, limitations, and written
+publication approval.
