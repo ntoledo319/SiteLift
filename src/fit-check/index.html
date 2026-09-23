@@ -131,6 +131,19 @@
         white-space: pre-wrap;
       }
 
+      .fit-cta-row .tier-btn {
+        width: auto;
+        padding: 1rem 1.5rem;
+        border-color: rgb(255 255 255 / 0.6);
+        color: var(--pure-white);
+      }
+
+      .fit-cta-row .tier-btn:hover,
+      .fit-cta-row .tier-btn:focus-visible {
+        background: var(--pure-white);
+        color: var(--deep-ink);
+      }
+
       .fit-side-note {
         margin-top: 1rem;
         font-size: 0.95rem;
@@ -504,6 +517,7 @@
     </script>
   </head>
   <body class="is-loading fit-check-page">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
     <div class="grain-overlay" aria-hidden="true"></div>
     <div class="logo-fragment fragment-1" aria-hidden="true"></div>
     <div class="logo-fragment fragment-2" aria-hidden="true"></div>
@@ -531,7 +545,7 @@
       </nav>
     </header>
 
-    <main class="fit-shell">
+    <main class="fit-shell" id="main-content" tabindex="-1">
       <section class="fit-hero">
         <div class="section-label">01 / DELPHI</div>
         <h1 class="section-title">The $750 paid front door.</h1>
@@ -730,7 +744,7 @@
                 <polyline points="5 12 10 17 19 7" />
               </svg>
             </div>
-            <h2>Brief received.</h2>
+            <h2 id="fit-success-heading" tabindex="-1">Brief received.</h2>
             <p>
               We will review the details and reply within 1-2 business days with package fit, destination
               platform direction, and Delphi Fit Check invoice instructions.
@@ -795,24 +809,34 @@
           submitLabel.textContent = 'Sending…';
 
           var data = new FormData(form);
+          // Never leave the visitor on an endless "Sending…" state if the intake API hangs.
+          var controller = typeof AbortController === 'function' ? new AbortController() : null;
+          var timer = controller ? setTimeout(function () { controller.abort(); }, 20000) : null;
           fetch('https://eolkits.com/api/v1/lead', {
             method: 'POST',
             headers: { Accept: 'application/json' },
             body: data,
+            signal: controller ? controller.signal : undefined,
           })
             .then(function (response) {
               if (!response.ok) throw new Error('Network response was not ok');
               return response.json();
             })
-            .then(function () {
+            .then(function (result) {
+              if (!result || result.ok !== true) throw new Error('Lead was not accepted');
+              if (timer) clearTimeout(timer);
               form.style.display = 'none';
               successBox.classList.add('is-visible');
-              successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              var heading = document.getElementById('fit-success-heading');
+              if (heading) heading.focus({ preventScroll: true });
+              successBox.scrollIntoView({ block: 'center' });
             })
             .catch(function () {
+              if (timer) clearTimeout(timer);
               errorBox.classList.add('is-visible');
               submit.disabled = false;
               submitLabel.textContent = originalLabel;
+              submit.focus();
             });
         });
       })();

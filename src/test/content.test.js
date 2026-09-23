@@ -11,6 +11,8 @@ const terms = read('src/terms/index.html');
 const sitemap = read('src/public/sitemap.xml');
 const viteConfig = read('vite.config.js');
 const styles = read('src/style.css');
+const llms = read('src/public/llms.txt');
+const pages = { home, fitCheck, privacy, terms };
 
 const expectCanonicalCreditRule = (content) => {
     expect(content).toMatch(/50%[\s\S]*within 30 days/i);
@@ -113,4 +115,69 @@ describe('progressive enhancement and asset contracts', () => {
             expect(existsSync(resolve(repoRoot, 'src/public', asset))).toBe(true);
         }
     );
+});
+
+describe('privacy notice matches actual collection (audit 2026-09-23)', () => {
+    const loadsBeacon = (html) => /static\.cloudflareinsights\.com\/beacon\.min\.js/.test(html);
+
+    test('discloses Cloudflare Web Analytics whenever a page loads the beacon', () => {
+        const anyBeacon = Object.values(pages).some(loadsBeacon);
+        if (anyBeacon) {
+            expect(privacy).toContain('Cloudflare Web Analytics');
+            expect(privacy).not.toMatch(/does not currently load client-side analytics/i);
+            expect(privacy).toMatch(/sets no cookies/i);
+        }
+    });
+
+    test('discloses third-party asset hosts the pages actually request', () => {
+        const all = Object.values(pages).join('\n');
+        if (all.includes('fonts.googleapis.com')) expect(privacy).toContain('Google Fonts');
+        if (all.includes('images.unsplash.com')) expect(privacy).toContain('Unsplash');
+    });
+
+    test('states how browser tracking signals are handled', () => {
+        expect(privacy).toMatch(/Do Not Track/);
+        expect(privacy).toMatch(/Global Privacy Control/);
+    });
+});
+
+describe('accessibility contracts (audit 2026-09-23)', () => {
+    test.each(Object.entries(pages))('%s has a working skip link to main content', (_name, html) => {
+        expect(html).toContain('<a class="skip-link" href="#main-content">');
+        expect(html).toMatch(/<main[^>]*id="main-content"/);
+    });
+
+    test('tier button accessible names start with their visible text (WCAG 2.5.3)', () => {
+        const buttons = [...home.matchAll(/<a[^>]*class="tier-btn"[^>]*aria-label="([^"]+)"[^>]*>\s*([^<]+?)\s*<\/a\s*>/g)];
+        expect(buttons).toHaveLength(4);
+        for (const [, label, visible] of buttons) {
+            expect(label.toLowerCase().startsWith(visible.trim().toLowerCase())).toBe(true);
+        }
+    });
+
+    test('section labels and fine print are not faded below contrast minimums', () => {
+        expect(styles).toMatch(/\.section-label\s*\{[\s\S]*?opacity: 0\.68;/);
+        expect(styles).toMatch(/\.cta-sub\s*\{[\s\S]*?opacity: 0\.72;/);
+    });
+
+    test('fit check success moves focus and the request cannot hang forever', () => {
+        expect(fitCheck).toContain('id="fit-success-heading" tabindex="-1"');
+        expect(fitCheck).toContain('AbortController');
+        expect(fitCheck).toMatch(/result\.ok !== true/);
+    });
+});
+
+describe('machine-readable pricing matches visible copy (audit 2026-09-23)', () => {
+    test('Elysian is open-ended in JSON-LD because the page shows $30K-$65K+', () => {
+        expect(home).toContain('$30K-$65K+');
+        const ld = JSON.parse(home.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+        const elysian = ld.hasOfferCatalog.itemListElement.find((offer) => offer.name === 'Elysian');
+        expect(elysian.priceSpecification.minPrice).toBe(30000);
+        expect(elysian.priceSpecification.maxPrice).toBeUndefined();
+    });
+
+    test('llms.txt publishes bands instead of a bare Aegis price', () => {
+        expect(llms).toContain('Aegis $7,500–$12,500');
+        expect(llms).not.toMatch(/~\$9,500/);
+    });
 });

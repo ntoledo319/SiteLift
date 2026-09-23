@@ -67,27 +67,52 @@ export const initMobileMenu = (toggle, links, body) => {
         toggle.setAttribute('aria-expanded', String(isActive));
     };
 
+    const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
+
     toggle.addEventListener('click', () => {
-        setActive(toggle.getAttribute('aria-expanded') !== 'true');
+        const opening = !isOpen();
+        setActive(opening);
+        // The toggle sits after the links in source order, so move focus into the opened menu.
+        if (opening) links.querySelector('a')?.focus();
     });
     document.addEventListener('keydown', (event) => {
-        if (event.key !== 'Escape' || toggle.getAttribute('aria-expanded') !== 'true') return;
+        if (event.key !== 'Escape' || !isOpen()) return;
         setActive(false);
         toggle.focus();
     });
+    // Choosing a destination (including same-page anchors) closes the full-screen menu so the
+    // visitor actually sees where they landed.
+    links.addEventListener('click', (event) => {
+        if (isOpen() && event.target.closest?.('a')) setActive(false);
+    });
+    // Keyboard users tabbing past the last link must not end up focused on content hidden
+    // behind the full-screen overlay.
+    const closeWhenFocusLeaves = (event) => {
+        const next = event.relatedTarget;
+        if (!isOpen() || !next || links.contains(next) || next === toggle) return;
+        setActive(false);
+    };
+    links.addEventListener('focusout', closeWhenFocusLeaves);
+    toggle.addEventListener('focusout', closeWhenFocusLeaves);
 };
 
 /**
- * Deconstructs text into spans for staggered animations.
+ * Deconstructs text into spans for staggered animations. The animated copy is hidden from
+ * assistive technology and a single visually hidden copy of the original text is exposed
+ * instead, so screen readers never announce headings letter by letter. Line reveals keep
+ * inline markup (for example the strikethrough and italic accents in the hero).
  */
 export const splitTexts = () => {
     document.querySelectorAll('.reveal-text').forEach((el) => {
+        if (el.dataset.revealSplit === 'true') return;
         const type = el.dataset.revealType;
-        const content = el.innerText;
-        el.innerHTML = '';
+        const label = (el.textContent || '').replace(/\s+/g, ' ').trim();
+        const animated = document.createElement('span');
+        animated.className = 'reveal-visual';
+        animated.setAttribute('aria-hidden', 'true');
 
         if (type === 'chars') {
-            const words = content.split(' ');
+            const words = label.split(' ');
             words.forEach((word, wordIdx) => {
                 const wordSpan = document.createElement('span');
                 wordSpan.style.whiteSpace = 'nowrap';
@@ -95,32 +120,44 @@ export const splitTexts = () => {
 
                 word.split('').forEach((char, i) => {
                     const span = document.createElement('span');
-                    span.innerText = char;
+                    span.textContent = char;
                     span.classList.add('char');
                     span.style.transitionDelay = `${(wordIdx * 5 + i) * 0.02}s`;
                     wordSpan.appendChild(span);
                 });
 
-                el.appendChild(wordSpan);
+                animated.appendChild(wordSpan);
                 if (wordIdx < words.length - 1) {
-                    el.appendChild(document.createTextNode(' '));
+                    animated.appendChild(document.createTextNode(' '));
                 }
             });
         } else {
-            content.split('\n').forEach((line, i) => {
-                if (line.trim() === '') return;
-                const lineDiv = document.createElement('div');
+            const lines = [[]];
+            Array.from(el.childNodes).forEach((node) => {
+                if (node.nodeName === 'BR') lines.push([]);
+                else lines[lines.length - 1].push(node);
+            });
+            lines.forEach((nodes, i) => {
+                if (nodes.every((node) => (node.textContent || '').trim() === '')) return;
+                const lineDiv = document.createElement('span');
                 lineDiv.classList.add('line-wrapper');
+                lineDiv.style.display = 'block';
                 lineDiv.style.overflow = 'hidden';
 
                 const span = document.createElement('span');
-                span.innerText = line;
                 span.classList.add('word');
                 span.style.transitionDelay = `${i * 0.15}s`;
+                nodes.forEach((node) => span.appendChild(node));
                 lineDiv.appendChild(span);
-                el.appendChild(lineDiv);
+                animated.appendChild(lineDiv);
             });
         }
+
+        const spoken = document.createElement('span');
+        spoken.className = 'sr-only';
+        spoken.textContent = label;
+        el.replaceChildren(spoken, animated);
+        el.dataset.revealSplit = 'true';
     });
 };
 

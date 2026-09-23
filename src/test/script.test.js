@@ -1,4 +1,4 @@
-import { initMobileMenu, initScrollReveals, updateParallax } from '../script.js';
+import { initMobileMenu, initScrollReveals, splitTexts, updateParallax } from '../script.js';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class {
@@ -120,5 +120,58 @@ describe('SiteLift Script Logic', () => {
 
         callback([{ target: element, isIntersecting: true }]);
         expect(element.classList.contains('is-visible')).toBe(true);
+    });
+
+    test('initMobileMenu closes after choosing a link and when focus leaves the menu', () => {
+        document.body.innerHTML = `
+            <button id="menu-toggle" aria-expanded="false"></button>
+            <div class="nav-links"><a href="#one" id="one-link">One</a><a href="#two">Two</a></div>
+            <a href="#after" id="after">After</a>
+        `;
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuLinks = document.querySelector('.nav-links');
+        initMobileMenu(menuToggle, menuLinks, document.body);
+
+        menuToggle.click();
+        expect(menuToggle.getAttribute('aria-expanded')).toBe('true');
+        expect(document.activeElement).toBe(document.getElementById('one-link'));
+        document.getElementById('one-link').click();
+        expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
+        expect(document.body.classList.contains('menu-open')).toBe(false);
+
+        menuToggle.click();
+        const after = document.getElementById('after');
+        menuLinks.dispatchEvent(new FocusEvent('focusout', { relatedTarget: after, bubbles: true }));
+        expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
+
+        menuToggle.click();
+        menuToggle.dispatchEvent(new FocusEvent('focusout', { relatedTarget: after, bubbles: true }));
+        expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    test('splitTexts exposes one readable copy and keeps inline accents', () => {
+        document.body.innerHTML = `
+            <h1 class="reveal-text" data-reveal-type="chars">SITELIFT</h1>
+            <p class="reveal-text" data-reveal-type="lines">
+                WordPress is the <span class="strikethrough">monthly drag</span>.<br />
+                SiteLift is the <span class="vibrant-italic">clean exit.</span>
+            </p>
+        `;
+        splitTexts();
+        splitTexts(); // idempotent
+
+        const h1 = document.querySelector('h1');
+        expect(h1.querySelector('.sr-only').textContent).toBe('SITELIFT');
+        expect(h1.querySelector('.reveal-visual').getAttribute('aria-hidden')).toBe('true');
+        expect(h1.querySelectorAll('.char')).toHaveLength(8);
+        expect(h1.querySelectorAll('.sr-only')).toHaveLength(1);
+
+        const p = document.querySelector('p');
+        expect(p.querySelector('.sr-only').textContent).toBe(
+            'WordPress is the monthly drag. SiteLift is the clean exit.'
+        );
+        expect(p.querySelectorAll('.line-wrapper')).toHaveLength(2);
+        expect(p.querySelector('.reveal-visual .strikethrough').textContent).toBe('monthly drag');
+        expect(p.querySelector('.reveal-visual .vibrant-italic').textContent).toBe('clean exit.');
     });
 });

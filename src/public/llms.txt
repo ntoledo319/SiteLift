@@ -9,8 +9,9 @@ Contact: hello@toledotechnologies.com · https://sitelift.toledotechnologies.com
 
 ## What it is
 - A productized WordPress-exit migration quoted after a $750 Delphi Fit Check.
-- Arcadia (simple 3–7 page sites) from $3,500. Aegis (standard small-business migration) ~$9,500.
-- SEO-sensitive elements are inventoried and redirects are mapped; the default hosting target is $20/mo before overages and third-party services; you own all accounts.
+- Published bands: Arcadia $3,500–$5,500 (simple 3–7 page sites), Aegis $7,500–$12,500 (standard small-business
+  migration; default quote about $9,500), Odyssey $15,000–$30,000, Elysian $30,000–$65,000+. Final scope follows the Fit Check.
+- SEO-sensitive elements are inventoried and redirects are mapped; the default hosting target is $20/mo before overages and third-party services; client accounts stay under client control.
 
 ## Good fit
 Small businesses tired of WordPress updates, plugin bloat, security scares, and slow hosting —
