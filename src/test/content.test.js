@@ -181,3 +181,49 @@ describe('machine-readable pricing matches visible copy (audit 2026-09-23)', () 
         expect(llms).not.toMatch(/~\$9,500/);
     });
 });
+
+describe('Pause motion control markup and styles (audit round 2)', () => {
+    const rule = (selector) => {
+        const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return styles.match(new RegExp(`(?:^|\\n)${escaped}\\s*\\{([^}]*)\\}`))?.[1] ?? null;
+    };
+
+    test('home ships a native, initially hidden toggle button named "Pause motion"', () => {
+        const button = home.match(
+            /<button\b([^>]*\bdata-motion-toggle\b[^>]*)>([\s\S]*?)<\/button>/
+        );
+        expect(button).toBeTruthy();
+        expect(button[1]).toMatch(/type="button"/);
+        expect(button[1]).toMatch(/aria-pressed="false"/);
+        expect(button[1]).toMatch(/\bhidden\b/);
+        expect(
+            button[2]
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+        ).toBe('Pause motion');
+    });
+
+    test('the looping glow only runs while script.js reports motion as running', () => {
+        expect(rule('.hero-light-leak')).not.toMatch(/animation/);
+        expect(rule('[data-motion] .hero-light-leak')).toMatch(/animation: leak-move 20s infinite/);
+        expect(styles).toMatch(
+            /\[data-motion='paused'\] \.hero-light-leak,\s*\[data-motion='paused'\] \.mouse::before\s*\{\s*animation-play-state: paused;/
+        );
+    });
+
+    test('the toggle respects [hidden], has a visible focus ring, and a 44px target', () => {
+        expect(rule('.motion-toggle[hidden]')).toMatch(/display: none;/);
+        expect(rule('.motion-toggle:focus-visible')).toMatch(/outline: 2px solid/);
+        expect(rule('.motion-toggle')).toMatch(/min-width: 44px;/);
+        expect(rule('.motion-toggle')).toMatch(/min-height: 44px;/);
+    });
+
+    test('the privacy notice discloses the remembered motion setting', () => {
+        expect(privacy).toMatch(/Pause motion control/);
+        expect(privacy).toMatch(/local storage/);
+        expect(privacy).not.toMatch(
+            /does not use browser storage\.<\/p>\s*<\/section>\s*<section class="legal-section legal-section--wide">\s*<h2>Changes/
+        );
+    });
+});

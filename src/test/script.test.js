@@ -1,4 +1,12 @@
-import { initMobileMenu, initScrollReveals, splitTexts, updateParallax } from '../script.js';
+import {
+    initMobileMenu,
+    initMotionControl,
+    initParallax,
+    initScrollReveals,
+    MOTION_STORAGE_KEY,
+    splitTexts,
+    updateParallax,
+} from '../script.js';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class {
@@ -173,5 +181,167 @@ describe('SiteLift Script Logic', () => {
         expect(p.querySelectorAll('.line-wrapper')).toHaveLength(2);
         expect(p.querySelector('.reveal-visual .strikethrough').textContent).toBe('monthly drag');
         expect(p.querySelector('.reveal-visual .vibrant-italic').textContent).toBe('clean exit.');
+    });
+});
+
+describe('Pause motion control (WCAG 2.2.2, audit round 2)', () => {
+    const memoryStorage = (initial = {}) => {
+        const data = { ...initial };
+        return {
+            data,
+            getItem: (key) => (key in data ? data[key] : null),
+            setItem: (key, value) => {
+                data[key] = String(value);
+            },
+        };
+    };
+    const reducedMotion = (matches) => {
+        const listeners = [];
+        return {
+            matches,
+            addEventListener: (type, listener) => listeners.push(listener),
+            fire: (next) => listeners.forEach((listener) => listener({ matches: next })),
+        };
+    };
+    let root;
+    let toggle;
+
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <button type="button" aria-pressed="false" data-motion-toggle hidden>
+                <span class="motion-toggle-label">Pause motion</span>
+            </button>`;
+        root = document.createElement('div');
+        toggle = document.querySelector('[data-motion-toggle]');
+    });
+
+    test('reveals the native toggle and pauses/resumes on click, remembering the choice', () => {
+        const storage = memoryStorage();
+        const motion = initMotionControl({
+            root,
+            toggle,
+            storage,
+            motionQuery: reducedMotion(false),
+        });
+
+        expect(toggle.hidden).toBe(false);
+        expect(toggle.tagName).toBe('BUTTON');
+        expect(toggle.getAttribute('aria-pressed')).toBe('false');
+        expect(root.dataset.motion).toBe('running');
+        expect(motion.isPaused()).toBe(false);
+        expect(storage.data[MOTION_STORAGE_KEY]).toBeUndefined();
+
+        toggle.click();
+        expect(toggle.getAttribute('aria-pressed')).toBe('true');
+        expect(root.dataset.motion).toBe('paused');
+        expect(motion.isPaused()).toBe(true);
+        expect(storage.data[MOTION_STORAGE_KEY]).toBe('paused');
+
+        toggle.click();
+        expect(toggle.getAttribute('aria-pressed')).toBe('false');
+        expect(root.dataset.motion).toBe('running');
+        expect(storage.data[MOTION_STORAGE_KEY]).toBe('running');
+    });
+
+    test('starts paused when the visitor prefers reduced motion, without writing storage', () => {
+        const storage = memoryStorage();
+        const motion = initMotionControl({
+            root,
+            toggle,
+            storage,
+            motionQuery: reducedMotion(true),
+        });
+
+        expect(motion.isPaused()).toBe(true);
+        expect(toggle.getAttribute('aria-pressed')).toBe('true');
+        expect(root.dataset.motion).toBe('paused');
+        expect(storage.data[MOTION_STORAGE_KEY]).toBeUndefined();
+    });
+
+    test('a stored choice wins over the OS default in both directions', () => {
+        initMotionControl({
+            root,
+            toggle,
+            storage: memoryStorage({ [MOTION_STORAGE_KEY]: 'paused' }),
+            motionQuery: reducedMotion(false),
+        });
+        expect(root.dataset.motion).toBe('paused');
+        expect(toggle.getAttribute('aria-pressed')).toBe('true');
+
+        const other = document.createElement('div');
+        initMotionControl({
+            root: other,
+            toggle: null,
+            storage: memoryStorage({ [MOTION_STORAGE_KEY]: 'running' }),
+            motionQuery: reducedMotion(true),
+        });
+        expect(other.dataset.motion).toBe('running');
+    });
+
+    test('ignores unknown stored values', () => {
+        initMotionControl({
+            root,
+            toggle,
+            storage: memoryStorage({ [MOTION_STORAGE_KEY]: 'sideways' }),
+            motionQuery: reducedMotion(false),
+        });
+        expect(root.dataset.motion).toBe('running');
+    });
+
+    test('keeps working when browser storage throws', () => {
+        const throwing = {
+            getItem: () => {
+                throw new Error('SecurityError');
+            },
+            setItem: () => {
+                throw new Error('QuotaExceededError');
+            },
+        };
+        const motion = initMotionControl({ root, toggle, storage: throwing, motionQuery: null });
+
+        expect(root.dataset.motion).toBe('running');
+        expect(() => toggle.click()).not.toThrow();
+        expect(motion.isPaused()).toBe(true);
+        expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    });
+
+    test('follows a mid-visit OS change only until the visitor chooses', () => {
+        const query = reducedMotion(false);
+        const motion = initMotionControl({
+            root,
+            toggle,
+            storage: memoryStorage(),
+            motionQuery: query,
+        });
+
+        query.fire(true);
+        expect(motion.isPaused()).toBe(true);
+        expect(toggle.getAttribute('aria-pressed')).toBe('true');
+
+        toggle.click(); // explicit "motion on"
+        query.fire(true);
+        expect(motion.isPaused()).toBe(false);
+        expect(root.dataset.motion).toBe('running');
+    });
+
+    test('parallax skips scroll frames while motion is paused', () => {
+        document.body.innerHTML = '<div class="logo-fragment"></div>';
+        const target = new EventTarget();
+        target.scrollY = 100;
+        let paused = true;
+        initParallax({ isPaused: () => paused, target, schedule: (callback) => callback() });
+        const fragment = document.querySelector('.logo-fragment');
+
+        target.dispatchEvent(new Event('scroll'));
+        expect(fragment.style.transform).toBe('');
+
+        paused = false;
+        target.dispatchEvent(new Event('scroll'));
+        expect(fragment.style.transform).toContain('translate3d(0, 8px, 0)');
+
+        paused = true;
+        target.scrollY = 500;
+        target.dispatchEvent(new Event('scroll'));
+        expect(fragment.style.transform).toContain('translate3d(0, 8px, 0)');
     });
 });

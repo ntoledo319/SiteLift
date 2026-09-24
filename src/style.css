@@ -413,7 +413,17 @@ section {
     background: radial-gradient(circle, rgb(6 182 212 / 15%) 0%, transparent 70%);
     filter: blur(80px);
     pointer-events: none;
+}
+
+/* The glow only drifts once script.js has set up the "Pause motion" control (WCAG 2.2.2).
+   Without JavaScript it stays still, because nothing could pause it. */
+[data-motion] .hero-light-leak {
     animation: leak-move 20s infinite alternate ease-in-out;
+}
+
+[data-motion='paused'] .hero-light-leak,
+[data-motion='paused'] .mouse::before {
+    animation-play-state: paused;
 }
 
 @keyframes leak-move {
@@ -522,6 +532,70 @@ body:not(.is-loading) .title-underline {
         transform: translate(-50%, 15px);
         opacity: 0;
     }
+}
+
+/* "Pause motion" control. It mirrors the scroll cue on the opposite corner of the hero and
+   stays hidden until script.js can honour it. Pressed = motion paused. */
+.motion-toggle {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 5vh;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 1.15rem;
+    border: 1px solid rgb(255 255 255 / 30%);
+    border-radius: 100px;
+    background: rgb(3 3 3 / 55%);
+    backdrop-filter: blur(8px);
+    color: var(--smoke-white);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease;
+}
+
+.motion-toggle[hidden] {
+    display: none;
+}
+
+.motion-toggle-icon {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.motion-toggle-icon::before,
+.motion-toggle-icon::after {
+    content: '';
+    width: 3px;
+    height: 11px;
+    border-radius: 1px;
+    background: currentcolor;
+}
+
+.motion-toggle:hover {
+    border-color: var(--laser-cyan);
+}
+
+.motion-toggle:focus-visible {
+    outline: 2px solid var(--laser-cyan);
+    outline-offset: 3px;
+}
+
+.motion-toggle[aria-pressed='true'] {
+    border-color: var(--pure-white);
+    background: var(--pure-white);
+    color: var(--deep-ink);
 }
 
 /* Breakup */
@@ -932,6 +1006,21 @@ footer .footer-col span {
         padding: 3rem 1.5rem;
     }
 
+    /* Icon-only on phones so it never collides with the scroll cue; the text stays the
+       accessible name. */
+    .motion-toggle {
+        padding: 0;
+    }
+
+    .motion-toggle-label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
     .v-footer {
         padding: 5rem var(--gutter);
     }
@@ -1020,6 +1109,13 @@ footer .footer-col span {
     .reveal-ready [data-scroll-reveal] {
         opacity: 1 !important;
         transform: none !important;
+    }
+
+    /* Motion starts paused here. If the visitor explicitly turns it back on with the
+       "Pause motion" control, that choice outranks the OS default for the ambient glow. */
+    [data-motion='running'] .hero-light-leak {
+        animation-duration: 20s !important;
+        animation-iteration-count: infinite !important;
     }
 }
 
