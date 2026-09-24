@@ -8,6 +8,7 @@ Marketing site for `sitelift.toledotechnologies.com`. SiteLift is the productize
 - `/fit-check/` — paid Delphi Fit Check intake and routing page
 - `/privacy/` — SiteLift-specific inquiry and request-data policy
 - `/terms/` — website terms and signed-agreement boundaries
+- `/fit-check/received/` — no-JS confirmation after a Fit Check brief (`noindex`, not in the sitemap)
 
 ## Lead capture
 
@@ -16,7 +17,10 @@ The Delphi Fit Check intake form submits to the G.R.A.C.E. lead bus at
 recorded to a database and emails the owner on a working mail path. This
 replaced the old FormSubmit flow, which was dead at mxroute and silently
 dropped submissions. The form posts via AJAX `fetch` and renders an in-page
-success state from the endpoint's JSON (`{ok, lead_id}`); it does not redirect. The first
+success state from the endpoint's JSON (`{ok, lead_id}`); that request drops the hidden
+`_next` field, so it never redirects. Without JavaScript the browser posts the form natively,
+and the lead API 303-redirects (its `_next` allowlist includes this origin) to
+`/fit-check/received/`, which repeats the in-page success copy. The first
 step has five visible fields, requires only email, and carries hidden product, source, offer, and collection-context
 fields so the lead remains attributable without front-loading the full paid assessment.
 
@@ -40,6 +44,22 @@ npm run lint
 npm test
 npm run build
 ```
+
+## Content Security Policy
+
+Each page carries its policy in a `<meta http-equiv="Content-Security-Policy">` tag at the top of
+`<head>` (the host does not send a CSP header). Inline `<script>` and `<style>` blocks are allowed
+by sha256 hash, never by `'unsafe-inline'`. `npm run build` ends with `scripts/check-csp.js`, which
+fails the build (and so the deploy) if a page's inline code or third-party hosts drift from its
+policy, and prints the hash a changed block now needs. `src/test/csp.test.js` runs the same check
+in Jest. New third-party hosts must be added to the matching directive on every page that uses
+them.
+
+## Motion
+
+The hero glow, scroll cue, and scroll-linked parallax pause from the "Pause motion" control on the
+home page (WCAG 2.2.2). It starts paused when the OS asks for reduced motion, and the visitor's
+choice is kept in `localStorage` (`sitelift-motion`), which the privacy notice discloses.
 
 ## Canonical commercial rules
 

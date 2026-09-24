@@ -8,12 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Meta Content-Security-Policy on every page, with hash-allowed inline code and a build-time drift check.
+- "Pause motion" control for the hero glow, scroll cue, and parallax (WCAG 2.2.2), remembered per visitor.
+- No-JS Fit Check confirmation at `/fit-check/received/` via the lead API's `_next` redirect.
 - Explicitly illustrative, redacted Fit Check format preview.
 - Regression coverage for reveal fail-open behavior, commercial copy, form context, and public assets.
 - Site-specific privacy and terms routes, with build, sitemap, and content-contract coverage.
 - CI lint, Jest, build-artifact, and post-deploy route gates.
 
 ### Changed
+- Pinned GitHub Actions to commit SHAs and gave CI read-only permissions.
+- Applied non-breaking dev-dependency security updates (npm audit 44 → 14, all dev-only).
 - Labeled payback as an estimate and published the calculation, assumptions, and wider package-range outcome.
 - Reduced the first Fit Check brief to five visible fields while preserving hidden lead context.
 - Replaced “Book” language with direct “Start” language for the in-site Fit Check route.
