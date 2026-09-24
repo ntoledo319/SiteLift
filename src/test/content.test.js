@@ -8,11 +8,12 @@ const home = read('src/index.html');
 const fitCheck = read('src/fit-check/index.html');
 const privacy = read('src/privacy/index.html');
 const terms = read('src/terms/index.html');
+const received = read('src/fit-check/received/index.html');
 const sitemap = read('src/public/sitemap.xml');
 const viteConfig = read('vite.config.js');
 const styles = read('src/style.css');
 const llms = read('src/public/llms.txt');
-const pages = { home, fitCheck, privacy, terms };
+const pages = { home, fitCheck, privacy, terms, received };
 
 const expectCanonicalCreditRule = (content) => {
     expect(content).toMatch(/50%[\s\S]*within 30 days/i);
@@ -225,5 +226,38 @@ describe('Pause motion control markup and styles (audit round 2)', () => {
         expect(privacy).not.toMatch(
             /does not use browser storage\.<\/p>\s*<\/section>\s*<section class="legal-section legal-section--wide">\s*<h2>Changes/
         );
+    });
+});
+
+describe('no-JS Fit Check fallback (audit round 2)', () => {
+    const next = fitCheck.match(/<input type="hidden" name="_next" value="([^"]+)" \/>/)?.[1];
+    const successCopy = [
+        'Brief received.',
+        'We will review the details and reply within 1-2 business days with package fit, destination platform direction, and Delphi Fit Check invoice instructions.',
+        'A reply from hello@toledotechnologies.com.',
+        '$750 fixed. 50% credited toward the kickoff Project Retainer if you proceed within 30 days, capped at that Project Retainer; unused credit lapses and does not roll forward.',
+    ];
+    const flat = (html) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+
+    test('the native POST asks the lead API to redirect to the SiteLift confirmation page', () => {
+        expect(next).toBe('https://sitelift.toledotechnologies.com/fit-check/received/');
+        expect(viteConfig).toContain("resolve(__dirname, 'src/fit-check/received/index.html')");
+    });
+
+    test('the in-page fetch drops _next so the API keeps answering with JSON', () => {
+        const script = fitCheck.match(/<script>([\s\S]*?)<\/script>/)[1];
+        const drop = script.indexOf("data.delete('_next')");
+        expect(drop).toBeGreaterThan(script.indexOf('new FormData(form)'));
+        expect(drop).toBeLessThan(script.indexOf('fetch('));
+        expect(script).toMatch(/result\.ok !== true/);
+    });
+
+    test('the confirmation page reuses the existing success copy and is not indexed', () => {
+        for (const line of successCopy) {
+            expect(flat(fitCheck)).toContain(line);
+            expect(flat(received)).toContain(line);
+        }
+        expect(received).toContain('<meta name="robots" content="noindex,follow" />');
+        expect(sitemap).not.toContain('/fit-check/received/');
     });
 });

@@ -1207,3 +1207,33 @@ footer .footer-col span {
         grid-column: auto;
     }
 }
+
+/* No-JS Fit Check confirmation (/fit-check/received/). Mirrors the in-page success state. */
+.confirm-shell {
+    max-width: 880px;
+}
+
+.confirm-mark {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: 2rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--electric-violet), var(--laser-cyan));
+    box-shadow: 0 12px 36px -10px rgb(139 92 246 / 60%);
+    color: var(--pure-white);
+}
+
+.confirm-mark svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.confirm-meta p {
+    color: var(--smoke-white);
+}
+
+.confirm-meta strong {
+    color: var(--pure-white);
+}

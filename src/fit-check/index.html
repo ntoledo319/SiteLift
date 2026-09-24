@@ -643,6 +643,8 @@
             <input type="hidden" name="_subject" value="SiteLift — Delphi Fit Check intake" />
             <input type="hidden" name="_template" value="table" />
             <input type="hidden" name="_captcha" value="false" />
+            <!-- No-JS fallback: the lead API 303-redirects a native POST here. The script below drops it. -->
+            <input type="hidden" name="_next" value="https://sitelift.toledotechnologies.com/fit-check/received/" />
             <input type="hidden" name="product" value="SiteLift" />
             <input type="hidden" name="source" value="sitelift-fit-check" />
             <input type="hidden" name="service" value="Delphi Fit Check" />
@@ -809,6 +811,9 @@
           submitLabel.textContent = 'Sending…';
 
           var data = new FormData(form);
+          // _next exists only for the no-JS POST. Without it the lead API answers with JSON
+          // ({ ok: true } or { detail }), which is what this in-page flow reads.
+          data.delete('_next');
           // Never leave the visitor on an endless "Sending…" state if the intake API hangs.
           var controller = typeof AbortController === 'function' ? new AbortController() : null;
           var timer = controller ? setTimeout(function () { controller.abort(); }, 20000) : null;
