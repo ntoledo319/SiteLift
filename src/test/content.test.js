@@ -140,6 +140,15 @@ describe('privacy notice matches actual collection (audit 2026-09-23)', () => {
         expect(privacy).toMatch(/Do Not Track/);
         expect(privacy).toMatch(/Global Privacy Control/);
     });
+
+    test('states the approved 24-month inquiry retention and nothing that contradicts it', () => {
+        const text = privacy.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+        expect(text).toContain(
+            'Inquiry records you submit through this site are deleted automatically 24 months after submission. If you become a client, what the engagement needs is kept under your agreement. You can ask us to delete your inquiry sooner at any time.'
+        );
+        expect(text).not.toMatch(/not deleted on a fixed schedule|as long as (?:reasonably )?needed|kept indefinitely|until you ask us to delete/i);
+        expect(text.match(/\b\d+ (?:months?|years?|days?)\b/g)).toEqual(['24 months']);
+    });
 });
 
 describe('accessibility contracts (audit 2026-09-23)', () => {

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI lint, Jest, build-artifact, and post-deploy route gates.
 
 ### Changed
+- Privacy notice now states that inquiry records are deleted automatically 24 months after submission (revised September 26, 2026).
 - Pinned GitHub Actions to commit SHAs and gave CI read-only permissions.
 - Applied non-breaking dev-dependency security updates (npm audit 44 → 14, all dev-only).
 - Labeled payback as an estimate and published the calculation, assumptions, and wider package-range outcome.
