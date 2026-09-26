@@ -66,6 +66,17 @@ Built on the round-1 commit `6cbee80`, which is now `origin/main`; live `version
 
 Details are under Tests run.
 
+## Round 3 fixes (2026-09-26)
+
+Built on the round-2 commit `78fc54b`, which is now `origin/main`; live `version.txt` read `78fc54b…` on 2026-09-25. Nothing from round 3 was pushed or deployed.
+
+1. **Lead retention stated** (row 11). Owner decision, 2026-09-25: inquiry records are deleted automatically 24 months (730 days) after submission. The privacy notice's "Lead form and your choices" section now says, word for word: "Inquiry records you submit through this site are deleted automatically 24 months after submission. If you become a client, what the engagement needs is kept under your agreement. You can ask us to delete your inquiry sooner at any time."
+   - No existing sentence contradicted it, so none was removed. The existing line inviting email requests for access, correction, or deletion stays as the how-to.
+   - Revision date: September 26, 2026. No other copy changed.
+2. **Who deletes.** The lead service's retention sweep (startup, then hourly) deletes lead rows older than `EOLKITS_LEAD_RETENTION_DAYS` days: eolkits `d6e4a888`, merged to eolkits `origin/main` in PR #81. The purge is `DELETE FROM leads WHERE ts < ?` with no status filter. Per the owner decision, spam-flagged submissions follow the same schedule. The setting defaults to 0 (off); the approved value is 730. It is applied on the server, not by this repo.
+3. **Outside the sweep.** The owner-notification email in the `hello@` mailbox, the email provider's send log, and database backups. The page makes no claim about them. For a deletion request, the manual steps in the GRACE lead-deletion runbook cover them (`deploy/grace/runbooks/lead-deletion.md`, steps 4 and 5).
+4. **Test.** One Jest content test pins the approved wording, rejects contradicting phrases, and allows only one retention period on the page. It fails against the round-2 page.
+
 ## Applicability and findings register
 
 | # | Check | Trigger / evidence | Class | Basis | Severity | Status | Verification |
@@ -75,12 +86,12 @@ Details are under Tests run.
 | 3 | Cookies and browser storage | `document.cookie` empty on all routes. localStorage and sessionStorage stay empty unless the visitor presses Pause motion, which stores one key (`sitelift-motion` = `paused`/`running`). Nothing is written by default, including under reduced motion. | APPLIES | Engineering; disclosure | — | OK | Playwright, round 2: storage empty after load; one key after pressing the control. Privacy notice now discloses it (row 6) |
 | 4 | Consent banner / GPC opt-out | No advertising, no sale, no cross-site tracking, no cookies. CTDPA opt-out signals apply only to targeted advertising and sale. | NOT APPLICABLE | Law: CTDPA opt-out-signal rule (CT AG) | — | OK | No banner added (prompt §1.E). DNT/GPC behaviour disclosed |
 | 5 | CT Data Privacy Act applicability | Thresholds: ≥35,000 consumers, OR any sensitive data, OR any sale. SiteLift collects no sensitive data and sells nothing. The owner's CT consumer count is not in evidence. | UNKNOWN | Law: CTDPA | — | OPEN | Would add formal rights and retention duties only if the owner crosses 35,000 consumers. See release blockers |
-| 6 | CalOPPA privacy-policy contents | Lead form collects email from a nationally reachable site. | APPLIES | Law: Cal. Bus. & Prof. Code §22575 | Medium | FIXED | Policy now covers categories collected, third parties, DNT handling, and the effective date. Round 2: it also discloses the Pause motion setting kept in local storage (revision date 2026-09-24) |
+| 6 | CalOPPA privacy-policy contents | Lead form collects email from a nationally reachable site. | APPLIES | Law: Cal. Bus. & Prof. Code §22575 | Medium | FIXED | Policy now covers categories collected, third parties, DNT handling, and the effective date. Round 2: it also discloses the Pause motion setting kept in local storage (revision date 2026-09-24). Round 3: it states the 24-month inquiry retention (revision date 2026-09-26) |
 | 7 | Third-party asset hosts | fonts.googleapis.com, fonts.gstatic.com, images.unsplash.com, static.cloudflareinsights.com, cloudflareinsights.com (host list captured in Playwright) | APPLIES | Disclosure / engineering | Low | FIXED | Disclosed in the policy. Self-hosting the fonts is optional (Google receives visitor IPs). Google says the Fonts API does not set cookies |
 | 8 | Lead form data flow | POST to eolkits.com. Backend has CORS allowlist, honeypot, per-IP/day/global rate limits, email validation, body-size limit, durable storage with re-sent notification (source read-only). Preflight returns ACAO `https://sitelift.toledotechnologies.com`. | APPLIES | Engineering | — | OK | OPTIONS preflight only. Backend source reviewed, not the deployed binary |
 | 9 | Form UX states | Before: no timeout, blind JSON success, focus lost after submit. | APPLIES | WCAG 3.3.1 / 4.1.3; engineering | Low | FIXED | Mocked endpoint in Playwright: empty submit blocked natively; success focuses the heading; 500 and `{detail}` show the error and refocus submit |
 | 10 | No-JS form fallback | Before: with JS off, the native POST showed raw JSON from eolkits.com. The deployed lead API (`git show f033a400:apps/grace-api/eolkits_grace/app.py`, `_SITE_ORIGINS` + `_resolve_next`) 303-redirects to an absolute `_next` whose origin is allow-listed; `https://sitelift.toledotechnologies.com` is on that list. | APPLIES | Engineering | Low | FIXED | Hidden `_next` → `/fit-check/received/` (new `noindex` page reusing the in-page success copy word for word). The fetch path runs `data.delete('_next')`, so the JSON flow is unchanged. Real `_resolve_next` code run in isolation accepts the URL and rejects look-alike hosts. Chromium end to end over local HTTPS stand-ins: no-JS POST → 303 → confirmation page; JS POST has no `_next`, stays on the page, shows the success state. Jest content tests |
-| 11 | Retention / deletion for leads | Policy offers access, correction, and deletion by email. No retention period is stated. Leads live in the GRACE lead DB. | APPLIES | Engineering; law only if CTDPA applies | Low | OPEN | Owner decision (retention period). No period was invented |
+| 11 | Retention / deletion for leads | Before: the policy offered access, correction, and deletion by email but stated no retention period. Leads live in the GRACE lead DB. | APPLIES | Engineering; law only if CTDPA applies | Low | FIXED | Round 3: owner decision 2026-09-25 (24 months / 730 days). The privacy notice states the approved wording (revision date 2026-09-26). The lead service's retention sweep does the deletion (`EOLKITS_LEAD_RETENTION_DAYS`, eolkits `d6e4a888`, code read). Jest test: approved wording present, no contradicting phrase, one period only; fails on the round-2 page. The server setting must be live when this ships (release blockers, item 3) |
 | 12 | Colour contrast | axe: `.section-label` 2.79–3.75:1, `.badge` 4.23:1, fit-check `.tier-btn` 2.09:1 | APPLIES | WCAG 2.2 AA 1.4.3 | Medium | FIXED | axe re-run: 0 violations on all 4 routes |
 | 13 | Label in name | Tier button names did not contain the visible text ("Start Here", "Scale") | APPLIES | WCAG 2.5.3 (A) | Medium | FIXED | Jest content test |
 | 14 | Split-text headings | Headings spoken letter by letter; hero strikethrough and italic removed at runtime | APPLIES | WCAG 1.3.1; design integrity | Medium | FIXED | Accessibility snapshot: `heading "SITELIFT"`, full paragraph read once. Screenshot shows the accents restored. Jest test |
@@ -106,7 +117,7 @@ Details are under Tests run.
 | 34 | Deploy pipeline | SSH forced-command deploy, pinned host key, `contents: read`, version gate. Actions were referenced by moving tags; `ci.yml` had no `permissions` block | APPLIES | Engineering (GitHub hardening guide) | Low | FIXED | `actions/checkout` and `actions/setup-node` are pinned to the full commit SHA of the tag already in use (`# v4`/`# v6` comments; SHAs from `gh api …/git/ref/tags/…`, cross-checked with `git ls-remote`). `ci.yml` now has `permissions: contents: read`. Runners, triggers, secrets, steps, and deploy logic are unchanged. `_verify/workflow-check.mjs` passes. Not run in Actions (billing-locked) |
 | 35 | Residual dev advisories | 14 advisories remain, all inside `@lhci/cli@0.13.0`'s own lighthouse 11 / puppeteer 21 tree (ws, tar-fs, tmp, extract-zip, uuid, cookie and others). They ship nothing to production. | APPLIES | Engineering | Low | OPEN | Clearing them needs `@lhci/cli` 0.15.x, a breaking 0.x upgrade. That was out of scope for a non-breaking fix. Upgrade it in its own change and re-run `npm run lighthouse` |
 
-Counts by status (after round 2): FIXED 16 · OPEN 3 · BLOCKED 1 · OK 10 (adequate, left alone) · N/A 5. By classification: APPLIES 27 · NOT APPLICABLE 6 (grouped) · UNKNOWN 2.
+Counts by status (after round 3): FIXED 17 · OPEN 2 · BLOCKED 1 · OK 10 (adequate, left alone) · N/A 5. By classification: APPLIES 27 · NOT APPLICABLE 6 (grouped) · UNKNOWN 2.
 
 ## Tests run
 
@@ -136,6 +147,12 @@ Counts by status (after round 2): FIXED 16 · OPEN 3 · BLOCKED 1 · OK 10 (adeq
 | Vite dev server (`timeout`-wrapped) | 0 CSP violations on all 5 pages |
 | axe-core 4.13, WCAG 2.x A/AA + best practice | 0 violations: home (running and paused) and privacy at 1280 and 375 px, plus `/fit-check/received/` after its heading-order fix |
 | `node _verify/verify-site.mjs SiteLift doc` / `build`, `node _verify/csp-check.mjs SiteLift`, `node _verify/workflow-check.mjs SiteLift` | All four print their markers |
+| **Round 3 (2026-09-26)** | |
+| `npm test` | 54/54 pass (was 53). New: the privacy notice has the approved retention wording, no contradicting phrase ("not deleted on a fixed schedule", "as long as reasonably needed", and similar), and exactly one retention period. The test fails against the round-2 page |
+| `npm run build` / `npm run lint` | Pass: 5 pages match their policies. The privacy page has no inline blocks, so no CSP hash changed / pass |
+| Chromium (Playwright) on the built `/privacy/` at 1280, 375, and 320 px | New paragraph visible in "Lead form and your choices"; revision date reads "September 26, 2026"; no horizontal scroll |
+| Lead-service code read (eolkits `origin/main`, read-only) | `purge_expired_leads` runs in the existing retention sweep; the setting defaults to 0 (off); the purge has no status filter |
+| `node _verify/verify-site.mjs SiteLift doc` / `build`, `node _verify/csp-check.mjs SiteLift` | All three print their markers |
 
 **Untested boundaries**
 - Real submission to the live lead API (forbidden). CORS was proven by preflight only.
@@ -149,14 +166,15 @@ Counts by status (after round 2): FIXED 16 · OPEN 3 · BLOCKED 1 · OK 10 (adeq
 - Round 2: the no-JS redirect was proven against a stub that mirrors the deployed `_resolve_next`. The live API was not called.
 - Round 2: the meta CSP was tested in Chromium only. Firefox and Safari were not run.
 - Round 2: the workflows were validated by parsing and by the oracle. GitHub Actions is billing-locked, so they were not run there.
+- Round 3: whether the live lead service already runs with `EOLKITS_LEAD_RETENTION_DAYS=730`. There is no server access from this audit; only the code was read.
 
 ## Release-blocking issues
 
 None of the committed changes need a credential to ship. Merging to `main` deploys them automatically. The owner should decide:
 
-1. **Approve the privacy wording.** The round-1 correction (Cloudflare Web Analytics disclosed) is live as of `6cbee80`. Round 2 adds one sentence about the stored Pause motion setting and moves the revision date to 2026-09-24. That sentence must ship with the control, because the old text said the site uses no browser storage.
+1. **Approve the privacy wording.** The round-1 correction (Cloudflare Web Analytics disclosed) is live as of `6cbee80`. Round 2 adds one sentence about the stored Pause motion setting and moves the revision date to 2026-09-24. That sentence must ship with the control, because the old text said the site uses no browser storage. Round 3 adds the owner-approved retention paragraph and moves the date to 2026-09-26.
 2. **Confirm `hello@toledotechnologies.com` receives mail** (mxroute). It is the only privacy-request and error-fallback channel. BLOCKED: I cannot send test mail.
-3. **Retention period for Fit Check leads** in the GRACE lead DB. The policy states none. Pick one, or confirm "until you ask us to delete it", and it can be added.
+3. **Retention period for Fit Check leads: decided 2026-09-25** (24 months), and the page now states it. **Ship order:** the lead service must run with `EOLKITS_LEAD_RETENTION_DAYS=730` no later than this page goes live. Otherwise the page promises a deletion that is not happening. Setting it means recreating the `eolkits-api` container, which is a restart, so it needs the owner's explicit go-ahead (lead-deletion runbook, "Retention"). The mailbox copy of each notification, the email provider's log, and backups stay manual (runbook steps 4 and 5).
 4. **CTDPA headcount:** confirm Toledo Technologies processes data of fewer than 35,000 Connecticut consumers per year. If not, a fuller rights and retention notice is required.
 5. CSP now ships in each page (row 21), so Caddy does not need to change. A header copy would add only `frame-ancestors` and reporting, and `X-Frame-Options` already blocks framing.
 6. Merging also changes the live deploy pipeline: actions are SHA-pinned and CI has read-only permissions. It takes effect on the next push to `main`. No steps, secrets, or triggers changed.
@@ -183,6 +201,10 @@ Round 2 sources, checked 2026-09-24:
 - Vite `server.fs.deny` advisory fixed after 8.0.15: https://github.com/advisories/GHSA-fx2h-pf6j-xcff
 - Deployed lead API redirect allowlist: `git -C eolkits show f033a400:apps/grace-api/eolkits_grace/app.py` (`_SITE_ORIGINS`, `_resolve_next`, `capture_lead`), read-only
 
+Round 3 sources, checked 2026-09-25 (read-only):
+- Lead retention sweep: `git -C eolkits-main show d6e4a888` (`purge_expired_leads` in `app.py`, `purge_leads_before` in `store.py`, `lead_retention_days` in `config.py`), on eolkits `origin/main` via PR #81
+- Lead-deletion runbook: `deploy/grace/runbooks/lead-deletion.md` in eolkits (what the sweep and the delete CLI do and do not remove; changing the setting recreates the container)
+
 ## Migration, configuration, and rollback
 
 - **Migration:** none. Static files only. No data, schema, environment, or secret changes.
@@ -202,3 +224,5 @@ Round 2 sources, checked 2026-09-24:
   3. Open each page with DevTools and confirm no "Content Security Policy" console errors.
   4. Optionally, submit once more with JavaScript disabled. It should land on `/fit-check/received/`. This creates a real lead.
 - **Round 2 rollback:** revert the round-2 commits. The CSP lives only in the HTML, so reverting removes it. To keep everything else, delete the meta tags and the `&& node scripts/check-csp.js dist` build step.
+- **Round 3:** privacy copy only; no configuration in this repo. The deletion it describes depends on the lead-service setting `EOLKITS_LEAD_RETENTION_DAYS=730` (release blockers, item 3).
+- **Round 3 rollback:** revert the round-3 commits. If lead retention is ever switched off or changed on the server, change this page in the same release, so it never promises a deletion that is not running.
