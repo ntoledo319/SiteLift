@@ -702,6 +702,18 @@ body:not(.is-loading) .title-underline {
     font-size: 1.1rem;
 }
 
+.feature-item a {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--laser-cyan);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    text-transform: uppercase;
+}
+
 /* ROI Section */
 .roi-section {
     text-align: center;
@@ -749,6 +761,35 @@ body:not(.is-loading) .title-underline {
     color: var(--slate-text);
     font-size: 0.88rem;
     line-height: 1.65;
+}
+
+.migration-specimen dl {
+    display: grid;
+    margin: 0 0 2rem;
+}
+
+.migration-specimen dl div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.35fr) 1fr;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid rgb(255 255 255 / 12%);
+}
+
+.migration-specimen dt {
+    color: var(--laser-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.migration-specimen dd {
+    margin: 0;
+    color: var(--smoke-white);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.45;
 }
 
 /* Tiers */
@@ -895,6 +936,18 @@ body:not(.is-loading) .title-underline {
 .massive-cta:hover {
     transform: scale(1.05) skewX(-2deg);
     color: var(--laser-cyan);
+}
+
+.cta-secondary {
+    display: inline-block;
+    margin: 0 0 2rem;
+    color: var(--laser-cyan);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
+    text-transform: uppercase;
 }
 
 .cta-sub {

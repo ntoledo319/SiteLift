@@ -14,6 +14,7 @@ const viteConfig = read('vite.config.js');
 const styles = read('src/style.css');
 const llms = read('src/public/llms.txt');
 const pages = { home, fitCheck, privacy, terms, received };
+const homeText = home.replace(/\s+/g, ' ');
 
 const expectCanonicalCreditRule = (content) => {
     expect(content).toMatch(/50%[\s\S]*within 30 days/i);
@@ -24,12 +25,13 @@ const expectCanonicalCreditRule = (content) => {
 
 describe('commercial truth contract', () => {
     test('publishes the payback as an estimate with visible inputs and exclusions', () => {
-        expect(home).toContain('EST. 20-34 MONTHS.');
-        expect(home).toContain('$9,500</strong> Aegis default quote');
-        expect(home).toContain('$300-$500</strong> current monthly cost');
-        expect(home).toContain('$20</strong> target baseline');
-        expect(home).toContain('The full $7,500-$12,500 Aegis band produces roughly 16-45');
-        expect(home).toContain('Estimate only.');
+        expect(home).toContain('KEEP THE URLS. CHANGE THE SYSTEM.');
+        expect(homeText).toContain('yields an estimated 20–34 month payback');
+        expect(homeText).toContain('$9,500 Aegis quote');
+        expect(homeText).toContain('$300–$500 current monthly');
+        expect(homeText).toContain('$20 target baseline');
+        expect(homeText).toContain('The full package band yields roughly 16–45 months');
+        expect(homeText).toContain('Estimate only.');
     });
 
     test('does not claim registered-service-mark status', () => {
@@ -66,7 +68,9 @@ describe('Fit Check intake contract', () => {
         );
 
         expect(controls).toHaveLength(5);
-        const requiredControls = controls.filter(([, , attributes]) => /\brequired\b/i.test(attributes));
+        const requiredControls = controls.filter(([, , attributes]) =>
+            /\brequired\b/i.test(attributes)
+        );
 
         expect(requiredControls).toHaveLength(1);
         expect(requiredControls[0][1].toLowerCase()).toBe('input');
@@ -87,7 +91,9 @@ describe('legal route contract', () => {
         expect(privacy).toContain('The only required public intake field is your email address.');
         expect(privacy).toContain('https://eolkits.com/api/v1/lead');
         expect(privacy).toContain('We do not sell or rent personal information');
-        expect(terms).toContain('Completed proposal-defined deliverables transfer after final payment.');
+        expect(terms).toContain(
+            'Completed proposal-defined deliverables transfer after final payment.'
+        );
         expect(terms).toContain('limited to the written support window and agreed scope');
         expect(terms).toContain('does not create a client relationship');
     });
@@ -146,19 +152,28 @@ describe('privacy notice matches actual collection (audit 2026-09-23)', () => {
         expect(text).toContain(
             'Inquiry records you submit through this site are deleted automatically 24 months after submission. If you become a client, what the engagement needs is kept under your agreement. You can ask us to delete your inquiry sooner at any time.'
         );
-        expect(text).not.toMatch(/not deleted on a fixed schedule|as long as (?:reasonably )?needed|kept indefinitely|until you ask us to delete/i);
+        expect(text).not.toMatch(
+            /not deleted on a fixed schedule|as long as (?:reasonably )?needed|kept indefinitely|until you ask us to delete/i
+        );
         expect(text.match(/\b\d+ (?:months?|years?|days?)\b/g)).toEqual(['24 months']);
     });
 });
 
 describe('accessibility contracts (audit 2026-09-23)', () => {
-    test.each(Object.entries(pages))('%s has a working skip link to main content', (_name, html) => {
-        expect(html).toContain('<a class="skip-link" href="#main-content">');
-        expect(html).toMatch(/<main[^>]*id="main-content"/);
-    });
+    test.each(Object.entries(pages))(
+        '%s has a working skip link to main content',
+        (_name, html) => {
+            expect(html).toContain('<a class="skip-link" href="#main-content">');
+            expect(html).toMatch(/<main[^>]*id="main-content"/);
+        }
+    );
 
     test('tier button accessible names start with their visible text (WCAG 2.5.3)', () => {
-        const buttons = [...home.matchAll(/<a[^>]*class="tier-btn"[^>]*aria-label="([^"]+)"[^>]*>\s*([^<]+?)\s*<\/a\s*>/g)];
+        const buttons = [
+            ...home.matchAll(
+                /<a[^>]*class="tier-btn"[^>]*aria-label="([^"]+)"[^>]*>\s*([^<]+?)\s*<\/a\s*>/g
+            ),
+        ];
         expect(buttons).toHaveLength(4);
         for (const [, label, visible] of buttons) {
             expect(label.toLowerCase().startsWith(visible.trim().toLowerCase())).toBe(true);
@@ -180,8 +195,12 @@ describe('accessibility contracts (audit 2026-09-23)', () => {
 describe('machine-readable pricing matches visible copy (audit 2026-09-23)', () => {
     test('Elysian is open-ended in JSON-LD because the page shows $30K-$65K+', () => {
         expect(home).toContain('$30K-$65K+');
-        const ld = JSON.parse(home.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
-        const elysian = ld.hasOfferCatalog.itemListElement.find((offer) => offer.name === 'Elysian');
+        const ld = JSON.parse(
+            home.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]
+        );
+        const elysian = ld.hasOfferCatalog.itemListElement.find(
+            (offer) => offer.name === 'Elysian'
+        );
         expect(elysian.priceSpecification.minPrice).toBe(30000);
         expect(elysian.priceSpecification.maxPrice).toBeUndefined();
     });

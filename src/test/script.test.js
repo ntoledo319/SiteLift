@@ -149,11 +149,15 @@ describe('SiteLift Script Logic', () => {
 
         menuToggle.click();
         const after = document.getElementById('after');
-        menuLinks.dispatchEvent(new FocusEvent('focusout', { relatedTarget: after, bubbles: true }));
+        menuLinks.dispatchEvent(
+            new FocusEvent('focusout', { relatedTarget: after, bubbles: true })
+        );
         expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
 
         menuToggle.click();
-        menuToggle.dispatchEvent(new FocusEvent('focusout', { relatedTarget: after, bubbles: true }));
+        menuToggle.dispatchEvent(
+            new FocusEvent('focusout', { relatedTarget: after, bubbles: true })
+        );
         expect(menuToggle.getAttribute('aria-expanded')).toBe('false');
     });
 
@@ -161,8 +165,8 @@ describe('SiteLift Script Logic', () => {
         document.body.innerHTML = `
             <h1 class="reveal-text" data-reveal-type="chars">SITELIFT</h1>
             <p class="reveal-text" data-reveal-type="lines">
-                WordPress is the <span class="strikethrough">monthly drag</span>.<br />
-                SiteLift is the <span class="vibrant-italic">clean exit.</span>
+                WordPress can become the <span class="strikethrough">monthly drag</span>.<br />
+                SiteLift finds the <span class="vibrant-italic">responsible next move.</span>
             </p>
         `;
         splitTexts();
@@ -176,11 +180,13 @@ describe('SiteLift Script Logic', () => {
 
         const p = document.querySelector('p');
         expect(p.querySelector('.sr-only').textContent).toBe(
-            'WordPress is the monthly drag. SiteLift is the clean exit.'
+            'WordPress can become the monthly drag. SiteLift finds the responsible next move.'
         );
         expect(p.querySelectorAll('.line-wrapper')).toHaveLength(2);
         expect(p.querySelector('.reveal-visual .strikethrough').textContent).toBe('monthly drag');
-        expect(p.querySelector('.reveal-visual .vibrant-italic').textContent).toBe('clean exit.');
+        expect(p.querySelector('.reveal-visual .vibrant-italic').textContent).toBe(
+            'responsible next move.'
+        );
     });
 });
 
