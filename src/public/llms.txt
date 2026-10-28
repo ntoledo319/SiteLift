@@ -3,7 +3,9 @@
 SiteLift is a productized route off WordPress with explicit controls for content, redirects,
 forms, access, and account ownership. It targets a faster, lower-maintenance stack without
 promising a ranking or cost outcome before the current site is assessed. By Toledo Technologies,
-a Connecticut web studio run by Nicholas Toledo and available for United States engagements.
+a Connecticut solo practice run by Nicholas Toledo, using substantial AI assistance for
+development, testing and correspondence. Available for United States engagements. Illustrative
+samples are not paid client results.
 
 Contact: hello@toledotechnologies.com · https://sitelift.toledotechnologies.com
 

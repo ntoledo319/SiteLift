@@ -104,3 +104,7 @@ documented in the grace-complete repo at `deploy/sites/toledo/README.md`.
 Required GitHub Actions secrets: `VPS_SSH_KEY`, `VPS_HOST`, `VPS_USER`,
 `VPS_KNOWN_HOSTS`. Rollback: repoint `current` to a previous release (the
 newest 5 are retained), or revert the commit and push.
+
+## Public claims — owner correction, October 27, 2026
+
+Toledo Technologies is Nicholas Toledo's solo operation, using substantial AI assistance for development, testing and correspondence. Do not describe a senior engineering team, independent senior coding expertise, verified paying clients, or client outcomes without evidence. Public reference builds and illustrative samples are not client projects. Do not promise personal human implementation or review unless the scope names that work and it actually occurs. Preserve this distinction in visible copy, metadata and crawl summaries.
